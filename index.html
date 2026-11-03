@@ -39,7 +39,7 @@
                 <!-- Upload Button -->
                 <button onclick="openUploadModal()" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-sm transition-all hover:shadow">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
-                    <span>Tải lên (Cloudinary)</span>
+                    <span>Tải lên tài liệu</span>
                 </button>
             </div>
         </div>
@@ -114,7 +114,7 @@
                     <i class="fa-solid fa-folder-open"></i>
                 </div>
                 <h3 class="text-base font-semibold text-slate-900 mb-1">Chưa có tài liệu hay video nào</h3>
-                <p class="text-sm text-slate-500 mb-6 max-w-sm mx-auto">Hãy tải lên file hoặc video thông qua Cloudinary để chia sẻ cho mọi người.</p>
+                <p class="text-sm text-slate-500 mb-6 max-w-sm mx-auto">Hãy tải lên file hoặc video để chia sẻ cho mọi người cùng xem.</p>
                 <button onclick="openUploadModal()" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                     <span>Tải lên ngay</span>
@@ -149,7 +149,7 @@
             <div class="flex items-center justify-between mb-5">
                 <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
                     <i class="fa-solid fa-cloud-arrow-up text-indigo-600"></i>
-                    <span>Tải lên qua Cloudinary</span>
+                    <span>Tải lên tài liệu / Video</span>
                 </h3>
                 <button onclick="closeUploadModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors">
                     <i class="fa-solid fa-xmark"></i>
@@ -175,7 +175,7 @@
                 <!-- Progress Bar Container -->
                 <div id="upload-progress-container" class="hidden space-y-2 pt-2">
                     <div class="flex justify-between text-xs font-medium text-slate-600">
-                        <span id="progress-text">Đang tải lên Cloudinary... 0%</span>
+                        <span id="progress-text">Đang tải lên... 0%</span>
                         <span id="progress-percent">0%</span>
                     </div>
                     <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
@@ -196,11 +196,11 @@
     <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
-            Kho Tài Liệu & Video • Lưu trữ siêu tốc qua Cloudinary & Firestore.
+            Kho Tài Liệu & Video Chung • Lưu trữ công khai an toàn.
         </div>
     </footer>
 
-    <!-- Firebase SDK & App Script -->
+    <!-- Firebase & Cloudinary Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -216,9 +216,9 @@
             measurementId: "G-25FE89T3TY"
         };
 
-        // Thông tin Cloudinary của bro
+        // Cấu hình Cloudinary
         const CLOUD_NAME = "l4vszdjn";
-        const UPLOAD_PRESET = "ml_default"; // Preset mặc định công khai của Cloudinary
+        const UPLOAD_PRESET = "ml_default";
 
         let db;
         let documents = [];
@@ -298,7 +298,7 @@
 
             const formData = new FormData();
             formData.append("file", file);
-            formData.append("upload_preset", UUPLOAD_PRESET_FIXED = "ml_default"); // Dùng unsigned preset mặc định của Cloudinary
+            formData.append("upload_preset", UPLOAD_PRESET);
 
             const xhr = new XMLHttpRequest();
             xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, true);
@@ -340,13 +340,14 @@
                         alert("Lỗi lưu dữ liệu Firestore: " + err.message);
                     }
                 } else {
-                    alert("Lỗi tải lên Cloudinary. Hãy đảm bảo bạn đã bật Unsigned Upload trong Settings của Cloudinary.");
+                    alert("Lỗi tải lên Cloudinary. Hãy chắc chắn preset 'ml_default' đã bật chế độ Unsigned trong Cài đặt Cloudinary.");
                 }
             };
 
             xhr.onerror = function() {
                 submitBtn.disabled = false;
                 document.getElementById('submit-text').innerText = "Xác nhận tải lên";
+                document.getElementById('upload-progress-container').classList.add('hidden');
                 alert("Lỗi kết nối mạng khi tải lên!");
             };
 
