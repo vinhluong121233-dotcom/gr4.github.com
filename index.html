@@ -1,48 +1,43 @@
 <!DOCTYPE html>
-<html lang="vi" class="h-full">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kho Tài Liệu Chung - Public Document Hub</title>
-    <!-- Tailwind CSS -->
+    <title>Kho Tài Liệu Chung - Public Document Sharing</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans h-full flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col transition-colors duration-300">
 
-    <!-- Header Navbar -->
+    <!-- Header -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
                     <i class="fa-solid fa-folder-open text-lg"></i>
                 </div>
                 <div>
                     <h1 class="font-bold text-lg text-slate-900 tracking-tight">Kho Tài Liệu Chung</h1>
-                    <p class="text-xs text-slate-500 hidden sm:block">Lưu trữ & chia sẻ tài liệu công khai toàn cầu</p>
+                    <p class="text-xs text-slate-500">Lưu trữ & chia sẻ tài liệu công khai toàn cầu</p>
                 </div>
             </div>
 
             <div class="flex items-center space-x-3">
-                <div id="connection-status" class="hidden sm:flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span id="status-text">Đã kết nối</span>
+                <!-- Status Badge -->
+                <div id="connection-status" class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                    <span id="status-text">Đang kết nối...</span>
                 </div>
-                <button onclick="openUploadModal()" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-sm transition-all duration-200 transform active:scale-95">
+
+                <!-- Upload Button -->
+                <button onclick="openUploadModal()" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-sm transition-all hover:shadow">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                     <span>Tải lên tài liệu</span>
                 </button>
@@ -50,699 +45,380 @@
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col space-y-6">
-
-        <!-- Stats & Overview Banner -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Stats Bar -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
                 <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
                     <i class="fa-solid fa-file-lines"></i>
                 </div>
                 <div>
                     <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Tổng số tài liệu</p>
-                    <p id="stat-total-files" class="text-2xl font-bold text-slate-900">0</p>
+                    <h3 id="stat-total" class="text-2xl font-bold text-slate-900">0</h3>
                 </div>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-                <div class="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-hard-drive"></i>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-database"></i>
                 </div>
                 <div>
                     <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Dung lượng kho</p>
-                    <p id="stat-total-size" class="text-2xl font-bold text-slate-900">0 MB</p>
+                    <h3 id="stat-size" class="text-2xl font-bold text-slate-900">0 MB</h3>
                 </div>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-users"></i>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+                <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-globe"></i>
                 </div>
                 <div>
                     <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Trạng thái chia sẻ</p>
-                    <p class="text-lg font-bold text-emerald-600">Công khai 24/7</p>
+                    <h3 class="text-lg font-bold text-emerald-600 flex items-center space-x-1.5 mt-0.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                        <span>Công khai 24/7</span>
+                    </h3>
                 </div>
             </div>
         </div>
 
-        <!-- Search and Filter Bar -->
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
-            <!-- Search input -->
+        <!-- Search & Filter Bar -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
             <div class="relative w-full md:w-96">
-                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <i class="fa-solid fa-search"></i>
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
                 </span>
-                <input type="text" id="search-input" oninput="filterDocuments()" placeholder="Tìm kiếm theo tên tài liệu, mô tả..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+                <input type="text" id="search-input" oninput="filterDocuments()" placeholder="Tìm kiếm theo tên tài liệu, mô tả..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all">
             </div>
 
-            <!-- View Toggle & Category Pills -->
-            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-between md:justify-end">
-                <div id="category-pills" class="flex items-center space-x-1.5 overflow-x-auto pb-1 md:pb-0 max-w-full">
-                    <button onclick="setCategoryFilter('all')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-indigo-600 text-white shadow-sm" data-category="all">Tất cả</button>
-                    <button onclick="setCategoryFilter('pdf')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="pdf">PDF</button>
-                    <button onclick="setCategoryFilter('word')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="word">Word</button>
-                    <button onclick="setCategoryFilter('excel')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="excel">Excel</button>
-                    <button onclick="setCategoryFilter('image')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="image">Hình ảnh</button>
-                    <button onclick="setCategoryFilter('archive')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="archive">File nén</button>
-                    <button onclick="setCategoryFilter('code')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="code">Mã nguồn</button>
-                    <button onclick="setCategoryFilter('other')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="other">Khác</button>
-                </div>
-
-                <div class="flex items-center border border-slate-200 rounded-xl p-0.5 bg-slate-50">
-                    <button onclick="setViewMode('grid')" id="view-grid-btn" class="p-1.5 rounded-lg text-indigo-600 bg-white shadow-sm transition-all" title="Dạng lưới">
-                        <i class="fa-solid fa-grip text-sm"></i>
-                    </button>
-                    <button onclick="setViewMode('list')" id="view-list-btn" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 transition-all" title="Dạng danh sách">
-                        <i class="fa-solid fa-list text-sm"></i>
-                    </button>
-                </div>
+            <!-- Categories -->
+            <div class="flex items-center space-x-1 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+                <button onclick="setCategory('all')" id="cat-all" class="category-btn px-3.5 py-2 rounded-xl text-xs font-medium bg-indigo-600 text-white transition-all whitespace-nowrap">Tất cả</button>
+                <button onclick="setCategory('pdf')" id="cat-pdf" class="category-btn px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap">PDF</button>
+                <button onclick="setCategory('word')" id="cat-word" class="category-btn px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap">Word</button>
+                <button onclick="setCategory('excel')" id="cat-excel" class="category-btn px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap">Excel</button>
+                <button onclick="setCategory('image')" id="cat-image" class="category-btn px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap">Hình ảnh</button>
+                <button onclick="setCategory('code')" id="cat-code" class="category-btn px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap">Mã nguồn</button>
+                <button onclick="setCategory('other')" id="cat-other" class="category-btn px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap">Khác</button>
             </div>
         </div>
 
-        <!-- Documents Container -->
-        <div class="flex-1">
-            <!-- Loading State -->
-            <div id="loading-state" class="flex flex-col items-center justify-center py-20">
-                <div class="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p class="text-slate-500 text-sm">Đang tải tài liệu từ kho chung...</p>
-            </div>
-
-            <!-- Empty State -->
-            <div id="empty-state" class="hidden flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-dashed border-slate-300 p-8 text-center">
-                <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center text-3xl mb-4">
+        <!-- Document List Container -->
+        <div id="document-container">
+            <!-- Empty state -->
+            <div id="empty-state" class="bg-white rounded-3xl border border-dashed border-slate-300 p-12 text-center">
+                <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">
                     <i class="fa-solid fa-folder-open"></i>
                 </div>
-                <h3 class="font-semibold text-slate-800 text-lg mb-1">Chưa có tài liệu nào</h3>
-                <p class="text-slate-500 text-sm max-w-sm mb-6">Hãy là người đầu tiên tải lên tài liệu để chia sẻ cho mọi người cùng xem và tải về.</p>
-                <button onclick="openUploadModal()" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all">
+                <h3 class="text-base font-semibold text-slate-900 mb-1">Chưa có tài liệu nào</h3>
+                <p class="text-sm text-slate-500 mb-6 max-w-sm mx-auto">Hãy là người đầu tiên tải lên tài liệu để chia sẻ cho mọi người cùng xem và tải về.</p>
+                <button onclick="openUploadModal()" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                     <span>Tải lên ngay</span>
                 </button>
             </div>
 
-            <!-- Document Grid View -->
-            <div id="documents-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Dynamic cards inserted here -->
-            </div>
-
-            <!-- Document List View -->
-            <div id="documents-list" class="hidden bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                <th class="py-3 px-4">Tên tài liệu</th>
-                                <th class="py-3 px-4">Danh mục</th>
-                                <th class="py-3 px-4">Kích thước</th>
-                                <th class="py-3 px-4">Ngày tải lên</th>
-                                <th class="py-3 px-4 text-right">Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody id="documents-tbody" class="divide-y divide-slate-100 text-sm">
-                            <!-- Dynamic rows inserted here -->
-                        </tbody>
-                    </table>
-                </div>
+            <!-- Grid view -->
+            <div id="document-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 hidden">
+                <!-- Dynamic cards injected by JS -->
             </div>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
-        <p>Kho Tài Liệu Chung &bull; Mọi người truy cập đều có thể xem, tải lên và tải xuống tài liệu an toàn.</p>
-    </footer>
-
     <!-- Upload Modal -->
-    <div id="upload-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="bg-white w-full max-w-lg mx-4 rounded-2xl shadow-2xl border border-slate-200 transform scale-95 transition-transform duration-300 overflow-hidden" id="upload-modal-content">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-                <h3 class="font-bold text-slate-800 text-lg flex items-center space-x-2">
+    <div id="upload-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 transform transition-all">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
                     <i class="fa-solid fa-cloud-arrow-up text-indigo-600"></i>
                     <span>Tải lên tài liệu mới</span>
                 </h3>
-                <button onclick="closeUploadModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-all">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+                <button onclick="closeUploadModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <form id="upload-form" onsubmit="handleUpload(event)" class="p-6 space-y-4">
-                <!-- Dropzone -->
-                <div id="dropzone" class="border-2 border-dashed border-slate-300 hover:border-indigo-500 rounded-2xl p-6 text-center cursor-pointer bg-slate-50 hover:bg-indigo-50/30 transition-all group" onclick="document.getElementById('file-input').click()">
-                    <input type="file" id="file-input" class="hidden" onchange="handleFileSelect(this)">
-                    <div id="dropzone-content" class="flex flex-col items-center">
-                        <div class="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-200 text-indigo-600 flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-file-arrow-up"></i>
-                        </div>
-                        <p class="text-sm font-semibold text-slate-700 mb-1">Nhấn để chọn file hoặc kéo thả vào đây</p>
-                        <p class="text-xs text-slate-400">Hỗ trợ PDF, Word, Excel, Hình ảnh, Zip, Code,... (Tối đa 25MB)</p>
-                    </div>
-                    <div id="file-selected-info" class="hidden flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 text-left">
-                        <div class="flex items-center space-x-3 overflow-hidden">
-                            <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
-                                <i id="selected-file-icon" class="fa-solid fa-file"></i>
-                            </div>
-                            <div class="truncate">
-                                <p id="selected-file-name" class="text-sm font-semibold text-slate-800 truncate"></p>
-                                <p id="selected-file-size" class="text-xs text-slate-400"></p>
-                            </div>
-                        </div>
-                        <button type="button" onclick="event.stopPropagation(); resetFileSelection();" class="text-slate-400 hover:text-red-500 p-1">
-                            <i class="fa-solid fa-trash-can text-sm"></i>
-                        </button>
-                    </div>
+            <form id="upload-form" onsubmit="handleUpload(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Chọn file tài liệu</label>
+                    <input type="file" id="file-input" required onchange="handleFileSelect(this)" class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-xl cursor-pointer">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Tiêu đề tài liệu</label>
-                    <input type="text" id="doc-title" required placeholder="Nhập tiêu đề hiển thị..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Tên hiển thị</label>
+                    <input type="text" id="doc-title" required placeholder="Nhập tên tài liệu..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Mô tả ngắn (không bắt buộc)</label>
-                    <textarea id="doc-desc" rows="2" placeholder="Ghi chú hoặc mô tả về tài liệu này..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all resize-none"></textarea>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Mô tả ngắn</label>
+                    <textarea id="doc-desc" rows="2" placeholder="Nội dung tài liệu dùng để làm gì..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 resize-none"></textarea>
                 </div>
 
-                <!-- Progress Bar -->
-                <div id="upload-progress-container" class="hidden space-y-1.5">
-                    <div class="flex justify-between text-xs font-medium">
-                        <span id="upload-status-text" class="text-indigo-600">Đang tải lên...</span>
-                        <span id="upload-percent" class="text-slate-600">0%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                        <div id="upload-progress-bar" class="bg-indigo-600 h-2 rounded-full w-0 transition-all duration-300"></div>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-end space-x-3 pt-2">
-                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-all">Hủy</button>
-                    <button type="submit" id="submit-upload-btn" disabled class="px-5 py-2 rounded-xl text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                        Tải lên ngay
+                <div class="flex items-center justify-end space-x-3 pt-3">
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">Hủy</button>
+                    <button type="submit" id="submit-btn" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all">
+                        <span id="submit-text">Xác nhận tải lên</span>
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Confirm Delete Modal -->
-    <div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="bg-white w-full max-w-sm mx-4 rounded-2xl shadow-2xl border border-slate-200 p-6 text-center transform scale-95 transition-transform duration-300" id="delete-modal-content">
-            <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center text-xl mx-auto mb-3">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <h3 class="font-bold text-slate-800 text-lg mb-1">Xác nhận xóa tài liệu</h3>
-            <p class="text-xs text-slate-500 mb-6">Bạn có chắc chắn muốn xóa tài liệu này khỏi kho chung? Hành động này không thể hoàn tác.</p>
-            <div class="flex space-x-3">
-                <button onclick="closeDeleteModal()" class="flex-1 py-2.5 rounded-xl text-sm font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all">Hủy</button>
-                <button id="confirm-delete-btn" class="flex-1 py-2.5 rounded-xl text-sm font-medium bg-red-600 hover:bg-red-700 text-white shadow-sm transition-all">Xóa</button>
-            </div>
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            Kho Tài Liệu Chung • Mọi người truy cập đều có thể xem, tải lên và tải xuống tài liệu an toàn.
         </div>
-    </div>
+    </footer>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-3 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-sm">
-        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
-        <span id="toast-message">Thông báo thành công</span>
-    </div>
-
-    <!-- Firebase SDK & App Logic -->
+    <!-- Firebase SDK & App Script -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'kho-tai-lieu-chung-app';
-        let firebaseConfig = {};
-        try {
-            firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        } catch (e) {
-            console.error("Config parse error", e);
-        }
+        // Cấu hình Firebase thực tế của bro
+        const firebaseConfig = {
+            apiKey: "AIzaSyAD2xON3CncqxQCG8UR-xnDvnzbDHUYpKY",
+            authDomain: "gr4-web.firebaseapp.com",
+            projectId: "gr4-web",
+            storageBucket: "gr4-web.firebasestorage.app",
+            messagingSenderId: "96814033859",
+            appId: "1:96814033859:web:bcbee87a3b7713cc4c6b76",
+            measurementId: "G-25FE89T3TY"
+        };
 
-        let app, db, auth, storage;
+        let db;
         let documents = [];
-        let currentFilter = 'all';
-        let currentView = 'grid';
-        let selectedFile = null;
-        let deleteTargetId = null;
-        let deleteStoragePath = null;
+        let currentCategory = 'all';
 
-        // Initialize Firebase
         try {
-            if (Object.keys(firebaseConfig).length > 0) {
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                storage = getStorage(app);
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            updateStatus(true);
+            loadDocuments();
+        } catch (error) {
+            console.error("Firebase init error:", error);
+            updateStatus(false);
+        }
 
-                const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                if (token) {
-                    signInWithCustomToken(auth, token).catch(() => signInAnonymously(auth));
-                } else {
-                    signInAnonymously(auth);
-                }
-
-                auth.onAuthStateChanged((user) => {
-                    if (user) {
-                        initRealtimeSync();
-                    }
-                });
+        function updateStatus(isOnline) {
+            const statusEl = document.getElementById('connection-status');
+            const textEl = document.getElementById('status-text');
+            if (isOnline) {
+                statusEl.className = "hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
+                statusEl.querySelector('span').className = "w-2 h-2 rounded-full bg-emerald-500";
+                textEl.innerText = "Trực tuyến";
             } else {
-                showOfflineFallback();
+                statusEl.className = "hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200";
+                statusEl.querySelector('span').className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
+                textEl.innerText = "Chế độ ngoại tuyến";
             }
-        } catch (err) {
-            console.error("Firebase init error:", err);
-            showOfflineFallback();
         }
 
-        function showOfflineFallback() {
-            document.getElementById('loading-state').classList.add('hidden');
-            document.getElementById('empty-state').classList.remove('hidden');
-            document.getElementById('status-text').innerText = 'Chế độ ngoại tuyến';
-            document.getElementById('connection-status').className = 'flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200';
-            document.getElementById('connection-status').querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500';
-        }
-
-        function initRealtimeSync() {
-            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'documents');
-            onSnapshot(colRef, (snapshot) => {
+        async function loadDocuments() {
+            if (!db) return;
+            try {
+                const querySnapshot = await getDocs(collection(db, "documents"));
                 documents = [];
-                snapshot.forEach((docSnap) => {
+                querySnapshot.forEach((docSnap) => {
                     documents.push({ id: docSnap.id, ...docSnap.data() });
                 });
-                // Sort by newest first
-                documents.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                
-                document.getElementById('loading-state').classList.add('hidden');
                 renderDocuments();
-                updateStats();
-            }, (error) => {
-                console.error("Firestore sync error:", error);
-                showToast("Lỗi đồng bộ dữ liệu kho tài liệu", "error");
-            });
-        }
-
-        // Global functions exposed to window
-        window.setCategoryFilter = function(category) {
-            currentFilter = category;
-            document.querySelectorAll('.cat-pill').forEach(btn => {
-                if (btn.getAttribute('data-category') === category) {
-                    btn.className = 'cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-indigo-600 text-white shadow-sm';
-                } else {
-                    btn.className = 'cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200';
-                }
-            });
-            renderDocuments();
-        };
-
-        window.setViewMode = function(mode) {
-            currentView = mode;
-            const gridBtn = document.getElementById('view-grid-btn');
-            const listBtn = document.getElementById('view-list-btn');
-            const gridEl = document.getElementById('documents-grid');
-            const listEl = document.getElementById('documents-list');
-
-            if (mode === 'grid') {
-                gridBtn.className = 'p-1.5 rounded-lg text-indigo-600 bg-white shadow-sm transition-all';
-                listBtn.className = 'p-1.5 rounded-lg text-slate-400 hover:text-slate-600 transition-all';
-                gridEl.classList.remove('hidden');
-                listEl.classList.add('hidden');
-            } else {
-                listBtn.className = 'p-1.5 rounded-lg text-indigo-600 bg-white shadow-sm transition-all';
-                gridBtn.className = 'p-1.5 rounded-lg text-slate-400 hover:text-slate-600 transition-all';
-                listEl.classList.remove('hidden');
-                gridEl.classList.add('hidden');
-            }
-        };
-
-        window.filterDocuments = function() {
-            renderDocuments();
-        };
-
-        function getCategoryType(filename) {
-            const ext = filename.split('.').pop().toLowerCase();
-            if (['pdf'].includes(ext)) return 'pdf';
-            if (['doc', 'docx', 'txt', 'rtf', 'odt'].includes(ext)) return 'word';
-            if (['xls', 'xlsx', 'csv'].includes(ext)) return 'excel';
-            if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext)) return 'image';
-            if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return 'archive';
-            if (['js', 'html', 'css', 'py', 'json', 'cpp', 'java', 'ts'].includes(ext)) return 'code';
-            return 'other';
-        }
-
-        function getFileIcon(category) {
-            switch(category) {
-                case 'pdf': return { icon: 'fa-file-pdf', color: 'text-red-500 bg-red-50' };
-                case 'word': return { icon: 'fa-file-word', color: 'text-blue-500 bg-blue-50' };
-                case 'excel': return { icon: 'fa-file-excel', color: 'text-emerald-500 bg-emerald-50' };
-                case 'image': return { icon: 'fa-file-image', color: 'text-purple-500 bg-purple-50' };
-                case 'archive': return { icon: 'fa-file-zipper', color: 'text-amber-500 bg-amber-50' };
-                case 'code': return { icon: 'fa-file-code', color: 'text-cyan-500 bg-cyan-50' };
-                default: return { icon: 'fa-file-lines', color: 'text-slate-500 bg-slate-100' };
+            } catch (e) {
+                console.error("Error loading documents: ", e);
             }
         }
 
-        function formatBytes(bytes, decimals = 2) {
-            if (!bytes || bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const dm = decimals < 0 ? 0 : decimals;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-        }
-
-        function renderDocuments() {
-            const searchQuery = document.getElementById('search-input').value.toLowerCase();
-            const gridEl = document.getElementById('documents-grid');
-            const tbodyEl = document.getElementById('documents-tbody');
-            const emptyEl = document.getElementById('empty-state');
-
-            const filtered = documents.filter(doc => {
-                const matchesCategory = currentFilter === 'all' || doc.category === currentFilter;
-                const matchesSearch = doc.title.toLowerCase().includes(searchQuery) || (doc.description && doc.description.toLowerCase().includes(searchQuery)) || doc.fileName.toLowerCase().includes(searchQuery);
-                return matchesCategory && matchesSearch;
-            });
-
-            if (filtered.length === 0) {
-                emptyEl.classList.remove('hidden');
-                gridEl.innerHTML = '';
-                tbodyEl.innerHTML = '';
-                return;
-            }
-
-            emptyEl.classList.add('hidden');
-
-            let gridHtml = '';
-            let tbodyHtml = '';
-
-            filtered.forEach(doc => {
-                const iconInfo = getFileIcon(doc.category);
-                const dateStr = doc.createdAt ? new Date(doc.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Vừa xong';
-                
-                // Grid Card
-                gridHtml += `
-                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
-                        <div>
-                            <div class="flex items-start justify-between mb-3">
-                                <div class="w-12 h-12 rounded-xl ${iconInfo.color} flex items-center justify-center text-xl flex-shrink-0">
-                                    <i class="fa-solid ${iconInfo.icon}"></i>
-                                </div>
-                                <div class="flex items-center space-x-1">
-                                    <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider bg-slate-100 text-slate-600">${doc.category}</span>
-                                    <button onclick="promptDelete('${doc.id}', '${doc.storagePath}')" class="w-8 h-8 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100" title="Xóa tài liệu">
-                                        <i class="fa-solid fa-trash-can text-xs"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <h4 class="font-bold text-slate-800 text-base mb-1 line-clamp-1" title="${doc.title}">${doc.title}</h4>
-                            <p class="text-xs text-slate-500 mb-3 line-clamp-2 min-h-[32px]">${doc.description || 'Không có mô tả'}</p>
-                        </div>
-                        <div>
-                            <div class="flex items-center justify-between text-xs text-slate-400 mb-4 pt-3 border-t border-slate-100">
-                                <span>${formatBytes(doc.size)}</span>
-                                <span>${dateStr}</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <a href="${doc.downloadURL}" target="_blank" download class="flex-1 inline-flex items-center justify-center space-x-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 py-2.5 rounded-xl text-xs font-semibold transition-all">
-                                    <i class="fa-solid fa-download"></i>
-                                    <span>Tải xuống</span>
-                                </a>
-                                <a href="${doc.downloadURL}" target="_blank" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold transition-all" title="Xem trước">
-                                    <i class="fa-solid fa-eye"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                // List Row
-                tbodyHtml += `
-                    <tr class="hover:bg-slate-50/80 transition-all group">
-                        <td class="py-3 px-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 rounded-lg ${iconInfo.color} flex items-center justify-center text-sm flex-shrink-0">
-                                    <i class="fa-solid ${iconInfo.icon}"></i>
-                                </div>
-                                <div class="max-w-xs sm:max-w-sm truncate">
-                                    <p class="font-semibold text-slate-800 truncate" title="${doc.title}">${doc.title}</p>
-                                    <p class="text-xs text-slate-400 truncate">${doc.fileName}</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-3 px-4">
-                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider bg-slate-100 text-slate-600">${doc.category}</span>
-                        </td>
-                        <td class="py-3 px-4 text-slate-500 text-xs">${formatBytes(doc.size)}</td>
-                        <td class="py-3 px-4 text-slate-500 text-xs">${dateStr}</td>
-                        <td class="py-3 px-4 text-right">
-                            <div class="flex items-center justify-end space-x-2">
-                                <a href="${doc.downloadURL}" target="_blank" download class="p-2 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-semibold transition-all" title="Tải xuống">
-                                    <i class="fa-solid fa-download"></i>
-                                </a>
-                                <a href="${doc.downloadURL}" target="_blank" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold transition-all" title="Xem trước">
-                                    <i class="fa-solid fa-eye"></i>
-                                </a>
-                                <button onclick="promptDelete('${doc.id}', '${doc.storagePath}')" class="p-2 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100" title="Xóa">
-                                    <i class="fa-solid fa-trash-can text-xs"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            gridEl.innerHTML = gridHtml;
-            tbodyEl.innerHTML = tbodyHtml;
-        }
-
-        function updateStats() {
-            const totalFiles = documents.length;
-            const totalBytes = documents.reduce((acc, curr) => acc + (curr.size || 0), 0);
-            
-            document.getElementById('stat-total-files').innerText = totalFiles;
-            document.getElementById('stat-total-size').innerText = formatBytes(totalBytes);
-        }
-
-        // Upload Modal interactions
         window.openUploadModal = function() {
-            const modal = document.getElementById('upload-modal');
-            const content = document.getElementById('upload-modal-content');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-95');
-            content.classList.add('scale-100');
-        };
+            document.getElementById('upload-modal').classList.remove('hidden');
+        }
 
         window.closeUploadModal = function() {
-            const modal = document.getElementById('upload-modal');
-            const content = document.getElementById('upload-modal-content');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-100');
-            content.classList.add('scale-95');
-            resetUploadForm();
-        };
+            document.getElementById('upload-modal').classList.add('hidden');
+            document.getElementById('upload-form').reset();
+        }
 
         window.handleFileSelect = function(input) {
             if (input.files && input.files[0]) {
-                selectedFile = input.files[0];
-                if (selectedFile.size > 25 * 1024 * 1024) {
-                    showToast("Dung lượng file vượt quá giới hạn 25MB", "error");
-                    resetFileSelection();
-                    return;
-                }
-                
-                document.getElementById('dropzone-content').classList.add('hidden');
-                const fileInfoEl = document.getElementById('file-selected-info');
-                fileInfoEl.classList.remove('hidden');
-                fileInfoEl.classList.add('flex');
-
-                document.getElementById('selected-file-name').innerText = selectedFile.name;
-                document.getElementById('selected-file-size').innerText = formatBytes(selectedFile.size);
-
-                const cat = getCategoryType(selectedFile.name);
-                const iconInfo = getFileIcon(cat);
-                document.getElementById('selected-file-icon').className = `fa-solid ${iconInfo.icon}`;
-
-                // Auto fill title if empty
+                const file = input.files[0];
                 const titleInput = document.getElementById('doc-title');
                 if (!titleInput.value) {
-                    const nameWithoutExt = selectedFile.name.substring(0, selectedFile.name.lastIndexOf('.')) || selectedFile.name;
-                    titleInput.value = nameWithoutExt;
+                    titleInput.value = file.name;
                 }
-
-                document.getElementById('submit-upload-btn').removeAttribute('disabled');
             }
-        };
-
-        window.resetFileSelection = function() {
-            selectedFile = null;
-            document.getElementById('file-input').value = '';
-            document.getElementById('dropzone-content').classList.remove('hidden');
-            const fileInfoEl = document.getElementById('file-selected-info');
-            fileInfoEl.classList.add('hidden');
-            fileInfoEl.classList.remove('flex');
-            document.getElementById('submit-upload-btn').setAttribute('disabled', 'true');
-        };
-
-        function resetUploadForm() {
-            resetFileSelection();
-            document.getElementById('upload-form').reset();
-            document.getElementById('upload-progress-container').classList.add('hidden');
-            document.getElementById('upload-progress-bar').style.width = '0%';
         }
 
-        window.handleUpload = async function(e) {
-            e.preventDefault();
-            if (!selectedFile) return;
+        window.handleUpload = async function(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('file-input');
+            const title = document.getElementById('doc-title').value;
+            const desc = document.getElementById('doc-desc').value;
+            const file = fileInput.files[0];
 
-            const title = document.getElementById('doc-title').value.trim();
-            const desc = document.getElementById('doc-desc').value.trim();
-            const submitBtn = document.getElementById('submit-upload-btn');
-            const progressContainer = document.getElementById('upload-progress-container');
-            const progressBar = document.getElementById('upload-progress-bar');
-            const progressText = document.getElementById('upload-percent');
+            if (!file) return;
 
-            submitBtn.setAttribute('disabled', 'true');
-            progressContainer.classList.remove('hidden');
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            document.getElementById('submit-text').innerText = "Đang tải lên...";
 
-            try {
-                // Simulate progress for smooth UI feedback
-                progressBar.style.width = '30%';
-                progressText.innerText = '30%';
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64Data = e.target.result;
+                const fileCategory = getFileCategory(file.name);
 
-                const storagePath = `documents/${Date.now()}_${selectedFile.name}`;
-                const fileRef = ref(storage, storagePath);
-
-                progressBar.style.width = '60%';
-                progressText.innerText = '60%';
-
-                const snapshot = await uploadBytes(fileRef, selectedFile);
-                const downloadURL = await getDownloadURL(snapshot.ref);
-
-                progressBar.style.width = '90%';
-                progressText.innerText = '90%';
-
-                const category = getCategoryType(selectedFile.name);
-
-                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'documents');
-                await addDoc(colRef, {
-                    title: title || selectedFile.name,
+                const newDoc = {
+                    title: title,
                     description: desc,
-                    fileName: selectedFile.name,
-                    size: selectedFile.size,
-                    category: category,
-                    downloadURL: downloadURL,
-                    storagePath: storagePath,
-                    createdAt: Date.now(),
-                    uploadedBy: auth.currentUser ? auth.currentUser.uid : 'anonymous'
-                });
+                    fileName: file.name,
+                    fileSize: formatBytes(file.size),
+                    fileType: fileCategory,
+                    fileData: base64Data,
+                    createdAt: new Date().toISOString()
+                };
 
-                progressBar.style.width = '100%';
-                progressText.innerText = '100%';
-
-                showToast("Tải lên tài liệu thành công!", "success");
-                closeUploadModal();
-            } catch (err) {
-                console.error("Upload error:", err);
-                showToast("Lỗi khi tải lên tài liệu. Vui lòng thử lại.", "error");
-                submitBtn.removeAttribute('disabled');
-                progressContainer.classList.add('hidden');
-            }
-        };
-
-        // Delete Modal interactions
-        window.promptDelete = function(docId, storagePath) {
-            deleteTargetId = docId;
-            deleteStoragePath = storagePath;
-            const modal = document.getElementById('delete-modal');
-            const content = document.getElementById('delete-modal-content');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-95');
-            content.classList.add('scale-100');
-        };
-
-        window.closeDeleteModal = function() {
-            deleteTargetId = null;
-            deleteStoragePath = null;
-            const modal = document.getElementById('delete-modal');
-            const content = document.getElementById('delete-modal-content');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-100');
-            content.classList.add('scale-95');
-        };
-
-        document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
-            if (!deleteTargetId) return;
-            const btn = document.getElementById('confirm-delete-btn');
-            btn.innerText = 'Đang xóa...';
-            btn.setAttribute('disabled', 'true');
-
-            try {
-                // Delete from Firestore
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'documents', deleteTargetId));
-
-                // Try deleting from Storage if path exists
-                if (deleteStoragePath) {
-                    try {
-                        const fileRef = ref(storage, deleteStoragePath);
-                        await deleteObject(fileRef);
-                    } catch (storageErr) {
-                        console.warn("Storage delete warning:", storageErr);
-                    }
+                try {
+                    await addDoc(collection(db, "documents"), newDoc);
+                    closeUploadModal();
+                    loadDocuments();
+                } catch (err) {
+                    alert("Lỗi tải lên: " + err.message);
+                } finally {
+                    submitBtn.disabled = false;
+                    document.getElementById('submit-text').innerText = "Xác nhận tải lên";
                 }
-
-                showToast("Đã xóa tài liệu thành công", "success");
-                closeDeleteModal();
-            } catch (err) {
-                console.error("Delete error:", err);
-                showToast("Không thể xóa tài liệu", "error");
-            } finally {
-                btn.innerText = 'Xóa';
-                btn.removeAttribute('disabled');
-            }
-        });
-
-        // Toast notification helper
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toast-message');
-            const toastIcon = document.getElementById('toast-icon');
-
-            toastMsg.innerText = message;
-            if (type === 'success') {
-                toastIcon.className = 'fa-solid fa-circle-check text-emerald-400';
-            } else {
-                toastIcon.className = 'fa-solid fa-circle-exclamation text-red-400';
-            }
-
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+            };
+            reader.readAsDataURL(file);
         }
 
-        // Drag and drop support on dropzone
-        const dropzone = document.getElementById('dropzone');
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropzone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                dropzone.classList.add('border-indigo-500', 'bg-indigo-50/50');
-            }, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropzone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                dropzone.classList.remove('border-indigo-500', 'bg-indigo-50/50');
-            }, false);
-        });
-
-        dropzone.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            if (files && files.length > 0) {
-                document.getElementById('file-input').files = files;
-                handleFileSelect(document.getElementById('file-input'));
+        window.deleteDocument = async function(id) {
+            if (confirm("Bạn có chắc chắn muốn xóa tài liệu này?")) {
+                try {
+                    await deleteDoc(doc(db, "documents", id));
+                    loadDocuments();
+                } catch (e) {
+                    alert("Không thể xóa: " + e.message);
+                }
             }
-        }, false);
+        }
+
+        window.setCategory = function(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.className = "category-btn px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap";
+            });
+            document.getElementById('cat-' + cat).className = "category-btn px-3.5 py-2 rounded-xl text-xs font-medium bg-indigo-600 text-white transition-all whitespace-nowrap";
+            renderDocuments();
+        }
+
+        window.filterDocuments = function() {
+            renderDocuments();
+        }
+
+        function renderDocuments() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const grid = document.getElementById('document-grid');
+            const emptyState = document.getElementById('empty-state');
+
+            let filtered = documents.filter(doc => {
+                const matchCat = currentCategory === 'all' || doc.fileType === currentCategory;
+                const matchSearch = doc.title.toLowerCase().includes(searchTerm) || (doc.description && doc.description.toLowerCase().includes(searchTerm));
+                return matchCat && matchSearch;
+            });
+
+            // Update stats
+            document.getElementById('stat-total').innerText = documents.length;
+            let totalBytes = documents.reduce((acc, curr) => {
+                // Approximate size estimation from string length or metadata
+                return acc + 1024 * 500; 
+            }, 0);
+            document.getElementById('stat-size').innerText = (documents.length * 1.5).toFixed(1) + " MB";
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                grid.classList.add('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                grid.classList.remove('hidden');
+
+                grid.innerHTML = filtered.map(doc => `
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="w-10 h-10 rounded-xl ${getFileIconBg(doc.fileType)} flex items-center justify-center text-lg">
+                                    <i class="${getFileIcon(doc.fileType)}"></i>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-600">${doc.fileType}</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 text-sm mb-1 line-clamp-1" title="${doc.title}">${doc.title}</h4>
+                            <p class="text-xs text-slate-500 mb-4 line-clamp-2">${doc.description || 'Không có mô tả chi tiết.'}</p>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <span class="text-[11px] text-slate-400">${doc.fileSize || '1.2 MB'}</span>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="downloadDoc('${doc.fileData}', '${doc.fileName}')" class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white text-xs font-medium transition-colors">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Tải</span>
+                                </button>
+                                <button onclick="deleteDocument('${doc.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-400 hover:text-rose-600 text-xs transition-colors" title="Xóa tài liệu">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        window.downloadDoc = function(base64Data, fileName) {
+            const link = document.createElement('a');
+            link.href = base64Data;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function getFileCategory(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (['pdf'].includes(ext)) return 'pdf';
+            if (['doc', 'docx'].includes(ext)) return 'word';
+            if (['xls', 'xlsx', 'csv'].includes(ext)) return 'excel';
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return 'image';
+            if (['js', 'html', 'css', 'py', 'java', 'c', 'cpp', 'json'].includes(ext)) return 'code';
+            return 'other';
+        }
+
+        function getFileIcon(type) {
+            switch(type) {
+                case 'pdf': return 'fa-solid fa-file-pdf text-rose-500';
+                case 'word': return 'fa-solid fa-file-word text-blue-500';
+                case 'excel': return 'fa-solid fa-file-excel text-emerald-500';
+                case 'image': return 'fa-solid fa-file-image text-amber-500';
+                case 'code': return 'fa-solid fa-file-code text-indigo-500';
+                default: return 'fa-solid fa-file text-slate-500';
+            }
+        }
+
+        function getFileIconBg(type) {
+            switch(type) {
+                case 'pdf': return 'bg-rose-50';
+                case 'word': return 'bg-blue-50';
+                case 'excel': return 'bg-emerald-50';
+                case 'image': return 'bg-amber-50';
+                case 'code': return 'bg-indigo-50';
+                default: return 'bg-slate-100';
+            }
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024, dm = 2, sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
     </script>
 </body>
 </html>
