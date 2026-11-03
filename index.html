@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kho Tài Liệu Chung - Public Document Sharing</title>
+    <title>Kho Tài Liệu Chung - Public Document & Video Sharing</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -25,7 +25,7 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-lg text-slate-900 tracking-tight">Kho Tài Liệu Chung</h1>
-                    <p class="text-xs text-slate-500">Lưu trữ & chia sẻ tài liệu công khai toàn cầu</p>
+                    <p class="text-xs text-slate-500">Lưu trữ & chia sẻ file, video dung lượng lớn (đến 500MB)</p>
                 </div>
             </div>
 
@@ -39,7 +39,7 @@
                 <!-- Upload Button -->
                 <button onclick="openUploadModal()" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-sm transition-all hover:shadow">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
-                    <span>Tải lên tài liệu / Video</span>
+                    <span>Tải lên (Tối đa 500MB)</span>
                 </button>
             </div>
         </div>
@@ -114,7 +114,7 @@
                     <i class="fa-solid fa-folder-open"></i>
                 </div>
                 <h3 class="text-base font-semibold text-slate-900 mb-1">Chưa có tài liệu hay video nào</h3>
-                <p class="text-sm text-slate-500 mb-6 max-w-sm mx-auto">Hãy là người đầu tiên tải lên file hoặc video để chia sẻ cho mọi người cùng xem và tải về.</p>
+                <p class="text-sm text-slate-500 mb-6 max-w-sm mx-auto">Hãy là người đầu tiên tải lên file hoặc video (tới 500MB) để chia sẻ cho mọi người cùng xem.</p>
                 <button onclick="openUploadModal()" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                     <span>Tải lên ngay</span>
@@ -149,7 +149,7 @@
             <div class="flex items-center justify-between mb-5">
                 <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
                     <i class="fa-solid fa-cloud-arrow-up text-indigo-600"></i>
-                    <span>Tải lên tài liệu / Video mới</span>
+                    <span>Tải lên file / Video (Đến 500MB)</span>
                 </h3>
                 <button onclick="closeUploadModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors">
                     <i class="fa-solid fa-xmark"></i>
@@ -158,18 +158,29 @@
 
             <form id="upload-form" onsubmit="handleUpload(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Chọn file / Video (tối đa ~20MB)</label>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Chọn file hoặc Video</label>
                     <input type="file" id="file-input" required onchange="handleFileSelect(this)" class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-xl cursor-pointer">
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Tên hiển thị</label>
-                    <input type="text" id="doc-title" required placeholder="Nhập tên tiêu đề..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600">
+                    <input type="text" id="doc-title" required placeholder="Nhập tiêu đề..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600">
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Mô tả ngắn</label>
-                    <textarea id="doc-desc" rows="2" placeholder="Nội dung file/video làm về gì..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 resize-none"></textarea>
+                    <textarea id="doc-desc" rows="2" placeholder="Nội dung tóm tắt..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 resize-none"></textarea>
+                </div>
+
+                <!-- Progress Bar Container -->
+                <div id="upload-progress-container" class="hidden space-y-2 pt-2">
+                    <div class="flex justify-between text-xs font-medium text-slate-600">
+                        <span id="progress-text">Đang tải lên... 0%</span>
+                        <span id="progress-percent">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                        <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
                 </div>
 
                 <div class="flex items-center justify-end space-x-3 pt-3">
@@ -185,7 +196,7 @@
     <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
-            Kho Tài Liệu & Video Chung • Truy cập public, tải lên và tải xuống dễ dàng.
+            Kho Tài Liệu & Video Chung • Hỗ trợ tệp lớn đến 500MB an toàn và nhanh chóng.
         </div>
     </footer>
 
@@ -193,6 +204,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         // Cấu hình Firebase
         const firebaseConfig = {
@@ -205,13 +217,14 @@
             measurementId: "G-25FE89T3TY"
         };
 
-        let db;
+        let db, storage;
         let documents = [];
         let currentCategory = 'all';
 
         try {
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
+            storage = getStorage(app);
             updateStatus(true);
             loadDocuments();
         } catch (error) {
@@ -254,6 +267,7 @@
         window.closeUploadModal = function() {
             document.getElementById('upload-modal').classList.add('hidden');
             document.getElementById('upload-form').reset();
+            document.getElementById('upload-progress-container').classList.add('hidden');
         }
 
         window.handleFileSelect = function(input) {
@@ -275,42 +289,75 @@
 
             if (!file) return;
 
+            // Kiểm tra giới hạn 500MB
+            const maxSize = 500 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert("File vượt quá dung lượng cho phép (tối đa 500MB).");
+                return;
+            }
+
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
-            document.getElementById('submit-text').innerText = "Đang xử lý tải lên...";
+            document.getElementById('submit-text').innerText = "Đang tải lên...";
+            document.getElementById('upload-progress-container').classList.remove('hidden');
 
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64Data = e.target.result;
-                const fileCategory = getFileCategory(file.name);
+            // Tạo đường dẫn lưu trên Firebase Storage
+            const storageRef = ref(storage, 'documents/' + Date.now() + '_' + file.name);
+            const uploadTask = uploadBytesResumable(storageRef, file);
 
-                const newDoc = {
-                    title: title,
-                    description: desc,
-                    fileName: file.name,
-                    fileSize: formatBytes(file.size),
-                    fileType: fileCategory,
-                    fileData: base64Data,
-                    createdAt: new Date().toISOString()
-                };
-
-                try {
-                    await addDoc(collection(db, "documents"), newDoc);
-                    closeUploadModal();
-                    loadDocuments();
-                } catch (err) {
-                    alert("Lỗi tải lên: " + err.message);
-                } finally {
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    const percent = Math.round(progress);
+                    document.getElementById('progress-bar').style.width = percent + '%';
+                    document.getElementById('progress-text').innerText = `Đang tải lên... ${percent}%`;
+                    document.getElementById('progress-percent').innerText = percent + '%';
+                }, 
+                (error) => {
+                    alert("Lỗi tải lên: " + error.message);
                     submitBtn.disabled = false;
                     document.getElementById('submit-text').innerText = "Xác nhận tải lên";
+                    document.getElementById('upload-progress-container').classList.add('hidden');
+                }, 
+                async () => {
+                    try {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        const fileCategory = getFileCategory(file.name);
+
+                        const newDoc = {
+                            title: title,
+                            description: desc,
+                            fileName: file.name,
+                            fileSize: formatBytes(file.size),
+                            fileType: fileCategory,
+                            fileUrl: downloadURL,
+                            storagePath: storageRef.fullPath,
+                            createdAt: new Date().toISOString()
+                        };
+
+                        await addDoc(collection(db, "documents"), newDoc);
+                        closeUploadModal();
+                        loadDocuments();
+                    } catch (err) {
+                        alert("Lỗi lưu dữ liệu: " + err.message);
+                    } finally {
+                        submitBtn.disabled = false;
+                        document.getElementById('submit-text').innerText = "Xác nhận tải lên";
+                        document.getElementById('upload-progress-container').classList.add('hidden');
+                    }
                 }
-            };
-            reader.readAsDataURL(file);
+            );
         }
 
-        window.deleteDocument = async function(id) {
-            if (confirm("Bạn có chắc chắn muốn xóa tài liệu/video này?")) {
+        window.deleteDocument = async function(id, storagePath) {
+            if (confirm("Bạn có chắc chắn muốn xóa tài liệu/video này không?")) {
                 try {
+                    // Xóa file trên Storage nếu có đường dẫn
+                    if (storagePath) {
+                        const fileRef = ref(storage, storagePath);
+                        await deleteObject(fileRef).catch(err => console.log("Storage delete note:", err));
+                    }
+                    // Xóa thông tin trong Firestore
                     await deleteDoc(doc(db, "documents", id));
                     loadDocuments();
                 } catch (e) {
@@ -386,19 +433,19 @@
                         </div>
 
                         <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
-                            <span class="text-[11px] text-slate-400">${doc.fileSize || 'FILE'}</span>
+                            <span class="text-[11px] text-slate-400 font-medium">${doc.fileSize || 'FILE'}</span>
                             <div class="flex items-center space-x-2">
                                 ${doc.fileType === 'video' ? `
-                                    <button onclick="playVideo('${doc.fileData}', '${doc.title}')" class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-white text-xs font-medium transition-colors">
+                                    <button onclick="playVideo('${doc.fileUrl}', '${doc.title}')" class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-white text-xs font-medium transition-colors">
                                         <i class="fa-solid fa-play"></i>
                                         <span>Xem</span>
                                     </button>
                                 ` : ''}
-                                <button onclick="downloadDoc('${doc.fileData}', '${doc.fileName}')" class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white text-xs font-medium transition-colors">
+                                <a href="${doc.fileUrl}" target="_blank" download="${doc.fileName}" class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white text-xs font-medium transition-colors">
                                     <i class="fa-solid fa-download"></i>
                                     <span>Tải</span>
-                                </button>
-                                <button onclick="deleteDocument('${doc.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-400 hover:text-rose-600 text-xs transition-colors" title="Xóa">
+                                </a>
+                                <button onclick="deleteDocument('${doc.id}', '${doc.storagePath || ''}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-400 hover:text-rose-600 text-xs transition-colors" title="Xóa">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>
@@ -408,18 +455,9 @@
             }
         }
 
-        window.downloadDoc = function(base64Data, fileName) {
-            const link = document.createElement('a');
-            link.href = base64Data;
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
         function getFileCategory(filename) {
             const ext = filename.split('.').pop().toLowerCase();
-            if (['mp4', 'webm', 'ogg', 'mov', 'mkv'].includes(ext)) return 'video';
+            if (['mp4', 'webm', 'ogg', 'mov', 'mkv', 'avi'].includes(ext)) return 'video';
             if (['pdf'].includes(ext)) return 'pdf';
             if (['doc', 'docx'].includes(ext)) return 'word';
             if (['xls', 'xlsx', 'csv'].includes(ext)) return 'excel';
