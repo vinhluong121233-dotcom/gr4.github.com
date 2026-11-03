@@ -1,462 +1,748 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Tủ Tài Liệu</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=JetBrains+Mono:wght@500&display=swap">
-<style>
-/* Layout: một ngăn kéo hồ sơ dạng cột đơn. Thanh tìm kiếm trên cùng, ô thả tệp, danh sách hàng, rồi khu sao lưu. */
-:root {
-  --bg: #eef1f3;
-  --surface: #ffffff;
-  --surface-2: #f5f7f8;
-  --ink: #17232b;
-  --muted: #5a6872;
-  --line: #d3dade;
-  --accent: #0b6e6e;
-  --accent-ink: #ffffff;
-  --accent-soft: #dcefee;
-  --danger: #b3261e;
-  --tag-note-bg: #dcefee; --tag-note-fg: #0b5c5c;
-  --tag-img-bg: #e6eafa; --tag-img-fg: #34459c;
-  --tag-file-bg: #e8ecef; --tag-file-fg: #46545e;
-  --font-display: "Bricolage Grotesque", "Be Vietnam Pro", system-ui, sans-serif;
-  --font-body: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #11181c; --surface: #1a2329; --surface-2: #151d22; --ink: #e6edf0; --muted: #94a4ae;
-    --line: #2c3841; --accent: #56c7c7; --accent-ink: #082020; --accent-soft: #17343a; --danger: #ff8f86;
-    --tag-note-bg: #17353a; --tag-note-fg: #84dcdc;
-    --tag-img-bg: #232b4d; --tag-img-fg: #aab7ff;
-    --tag-file-bg: #26323a; --tag-file-fg: #b8c6cf;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #11181c; --surface: #1a2329; --surface-2: #151d22; --ink: #e6edf0; --muted: #94a4ae;
-  --line: #2c3841; --accent: #56c7c7; --accent-ink: #082020; --accent-soft: #17343a; --danger: #ff8f86;
-  --tag-note-bg: #17353a; --tag-note-fg: #84dcdc;
-  --tag-img-bg: #232b4d; --tag-img-fg: #aab7ff;
-  --tag-file-bg: #26323a; --tag-file-fg: #b8c6cf;
-  color-scheme: dark;
-}
-* { box-sizing: border-box; }
-body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
-.wrap { max-width: 880px; margin: 0 auto; padding-block: 28px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 20px; }
-button, input, select, textarea { font: inherit; color: inherit; }
-button { cursor: pointer; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kho Tài Liệu Chung - Public Document Hub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans h-full flex flex-col selection:bg-indigo-500 selection:text-white">
 
-header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 8px 24px; }
-h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 6vw, 40px); line-height: 1.05; letter-spacing: -0.02em; text-wrap: balance; }
-.sub { margin: 6px 0 0; color: var(--muted); max-width: 52ch; }
-.stats { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); text-align: right; }
-.stats b { color: var(--ink); font-weight: 500; }
+    <!-- Header Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+                    <i class="fa-solid fa-folder-open text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-slate-900 tracking-tight">Kho Tài Liệu Chung</h1>
+                    <p class="text-xs text-slate-500 hidden sm:block">Lưu trữ & chia sẻ tài liệu công khai toàn cầu</p>
+                </div>
+            </div>
 
-.drop { border: 1.5px dashed var(--line); border-radius: 10px; background: var(--surface); padding: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; transition: border-color .15s, background .15s; }
-.drop.over { border-color: var(--accent); background: var(--accent-soft); }
-.drop p { margin: 0; min-width: 0; }
-.drop strong { display: block; font-family: var(--font-display); font-size: 18px; font-weight: 600; }
-.drop span.hint { color: var(--muted); font-size: 13.5px; }
-.btns { display: flex; flex-wrap: wrap; gap: 8px; }
-.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 8px 14px; font-weight: 500; }
-.btn:hover { border-color: var(--accent); }
-.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-.btn.primary:hover { filter: brightness(1.08); }
-.btn.danger { color: var(--danger); }
-.btn:disabled { opacity: .5; cursor: not-allowed; }
-.btn.sm { padding: 4px 10px; font-size: 13px; border-radius: 6px; }
+            <div class="flex items-center space-x-3">
+                <div id="connection-status" class="hidden sm:flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="status-text">Đã kết nối</span>
+                </div>
+                <button onclick="openUploadModal()" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-sm transition-all duration-200 transform active:scale-95">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <span>Tải lên tài liệu</span>
+                </button>
+            </div>
+        </div>
+    </header>
 
-.tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.search { flex: 1 1 220px; min-width: 0; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 9px 12px; }
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
-.seg button { border: 0; background: transparent; padding: 8px 12px; font-size: 13.5px; color: var(--muted); }
-.seg button + button { border-left: 1px solid var(--line); }
-.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
-select.sort { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 8px 10px; }
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col space-y-6">
 
-.list { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; }
-.row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 14px; align-items: center; padding: 12px 16px; }
-.row + .row { border-top: 1px solid var(--line); }
-.tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; min-width: 52px; text-align: center; padding: 6px 8px; border-radius: 6px; background: var(--tag-file-bg); color: var(--tag-file-fg); }
-.tag.note { background: var(--tag-note-bg); color: var(--tag-note-fg); }
-.tag.image { background: var(--tag-img-bg); color: var(--tag-img-fg); }
-.main { min-width: 0; }
-.name { font-weight: 500; overflow-wrap: anywhere; background: none; border: 0; padding: 0; text-align: left; }
-.name:hover { color: var(--accent); text-decoration: underline; }
-.meta { color: var(--muted); font-size: 12.5px; font-family: var(--font-mono); }
-.acts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.rename { width: 100%; border: 1px solid var(--accent); background: var(--surface-2); border-radius: 6px; padding: 6px 8px; }
-.ask { color: var(--danger); font-size: 13.5px; margin-right: 4px; }
-@media (min-width: 680px) {
-  .row { grid-template-columns: auto minmax(0, 1fr) auto; }
-  .acts { grid-column: auto; justify-content: flex-end; }
-}
-.empty { padding: 40px 20px; text-align: center; color: var(--muted); }
-.empty strong { display: block; color: var(--ink); font-family: var(--font-display); font-size: 18px; margin-bottom: 4px; }
+        <!-- Stats & Overview Banner -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-file-lines"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Tổng số tài liệu</p>
+                    <p id="stat-total-files" class="text-2xl font-bold text-slate-900">0</p>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                <div class="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-hard-drive"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Dung lượng kho</p>
+                    <p id="stat-total-size" class="text-2xl font-bold text-slate-900">0 MB</p>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Trạng thái chia sẻ</p>
+                    <p class="text-lg font-bold text-emerald-600">Công khai 24/7</p>
+                </div>
+            </div>
+        </div>
 
-.panel { border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); padding: 16px; display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; color: var(--muted); }
-.panel h2 { margin: 0; font-family: var(--font-display); font-size: 16px; color: var(--ink); }
-.panel p { margin: 0; max-width: 70ch; }
-.warn { border: 1px solid var(--danger); color: var(--danger); background: var(--surface); border-radius: 8px; padding: 10px 14px; font-size: 13.5px; }
+        <!-- Search and Filter Bar -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+            <!-- Search input -->
+            <div class="relative w-full md:w-96">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-search"></i>
+                </span>
+                <input type="text" id="search-input" oninput="filterDocuments()" placeholder="Tìm kiếm theo tên tài liệu, mô tả..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+            </div>
 
-.scrim { position: fixed; inset: 0; background: rgba(8, 14, 18, .6); display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); z-index: 20; }
-.sheet { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; width: 100%; max-width: 760px; max-height: 100%; display: flex; flex-direction: column; overflow: hidden; }
-.sheet-head { display: flex; gap: 10px; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--line); }
-.sheet-head h3 { margin: 0; font-family: var(--font-display); font-size: 17px; min-width: 0; overflow-wrap: anywhere; }
-.sheet-body { padding: 16px; overflow: auto; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
-.sheet-body img, .sheet-body video { max-width: 100%; max-height: 60vh; object-fit: contain; align-self: center; }
-.sheet-body pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-mono); font-size: 13px; }
-.sheet-body input.title { border: 1px solid var(--line); background: var(--surface-2); border-radius: 8px; padding: 9px 12px; font-weight: 500; }
-.sheet-body textarea { border: 1px solid var(--line); background: var(--surface-2); border-radius: 8px; padding: 12px; min-height: 40vh; resize: vertical; line-height: 1.6; }
-.sheet-foot { padding: 12px 16px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+            <!-- View Toggle & Category Pills -->
+            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-between md:justify-end">
+                <div id="category-pills" class="flex items-center space-x-1.5 overflow-x-auto pb-1 md:pb-0 max-w-full">
+                    <button onclick="setCategoryFilter('all')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-indigo-600 text-white shadow-sm" data-category="all">Tất cả</button>
+                    <button onclick="setCategoryFilter('pdf')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="pdf">PDF</button>
+                    <button onclick="setCategoryFilter('word')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="word">Word</button>
+                    <button onclick="setCategoryFilter('excel')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="excel">Excel</button>
+                    <button onclick="setCategoryFilter('image')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="image">Hình ảnh</button>
+                    <button onclick="setCategoryFilter('archive')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="archive">File nén</button>
+                    <button onclick="setCategoryFilter('code')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="code">Mã nguồn</button>
+                    <button onclick="setCategoryFilter('other')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-category="other">Khác</button>
+                </div>
 
-.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; font-size: 13.5px; z-index: 30; max-width: calc(100% - 32px); }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
-</style>
+                <div class="flex items-center border border-slate-200 rounded-xl p-0.5 bg-slate-50">
+                    <button onclick="setViewMode('grid')" id="view-grid-btn" class="p-1.5 rounded-lg text-indigo-600 bg-white shadow-sm transition-all" title="Dạng lưới">
+                        <i class="fa-solid fa-grip text-sm"></i>
+                    </button>
+                    <button onclick="setViewMode('list')" id="view-list-btn" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 transition-all" title="Dạng danh sách">
+                        <i class="fa-solid fa-list text-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-<div class="wrap">
-  <header>
-    <div>
-      <h1>Tủ Tài Liệu</h1>
-      <p class="sub">Lưu tệp và ghi chú, mở lại lúc nào cũng được. Không cần đăng nhập.</p>
+        <!-- Documents Container -->
+        <div class="flex-1">
+            <!-- Loading State -->
+            <div id="loading-state" class="flex flex-col items-center justify-center py-20">
+                <div class="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+                <p class="text-slate-500 text-sm">Đang tải tài liệu từ kho chung...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-dashed border-slate-300 p-8 text-center">
+                <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center text-3xl mb-4">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h3 class="font-semibold text-slate-800 text-lg mb-1">Chưa có tài liệu nào</h3>
+                <p class="text-slate-500 text-sm max-w-sm mb-6">Hãy là người đầu tiên tải lên tài liệu để chia sẻ cho mọi người cùng xem và tải về.</p>
+                <button onclick="openUploadModal()" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <span>Tải lên ngay</span>
+                </button>
+            </div>
+
+            <!-- Document Grid View -->
+            <div id="documents-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamic cards inserted here -->
+            </div>
+
+            <!-- Document List View -->
+            <div id="documents-list" class="hidden bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                <th class="py-3 px-4">Tên tài liệu</th>
+                                <th class="py-3 px-4">Danh mục</th>
+                                <th class="py-3 px-4">Kích thước</th>
+                                <th class="py-3 px-4">Ngày tải lên</th>
+                                <th class="py-3 px-4 text-right">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="documents-tbody" class="divide-y divide-slate-100 text-sm">
+                            <!-- Dynamic rows inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+        <p>Kho Tài Liệu Chung &bull; Mọi người truy cập đều có thể xem, tải lên và tải xuống tài liệu an toàn.</p>
+    </footer>
+
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-lg mx-4 rounded-2xl shadow-2xl border border-slate-200 transform scale-95 transition-transform duration-300 overflow-hidden" id="upload-modal-content">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+                <h3 class="font-bold text-slate-800 text-lg flex items-center space-x-2">
+                    <i class="fa-solid fa-cloud-arrow-up text-indigo-600"></i>
+                    <span>Tải lên tài liệu mới</span>
+                </h3>
+                <button onclick="closeUploadModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="upload-form" onsubmit="handleUpload(event)" class="p-6 space-y-4">
+                <!-- Dropzone -->
+                <div id="dropzone" class="border-2 border-dashed border-slate-300 hover:border-indigo-500 rounded-2xl p-6 text-center cursor-pointer bg-slate-50 hover:bg-indigo-50/30 transition-all group" onclick="document.getElementById('file-input').click()">
+                    <input type="file" id="file-input" class="hidden" onchange="handleFileSelect(this)">
+                    <div id="dropzone-content" class="flex flex-col items-center">
+                        <div class="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-200 text-indigo-600 flex items-center justify-center text-2xl mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-file-arrow-up"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-700 mb-1">Nhấn để chọn file hoặc kéo thả vào đây</p>
+                        <p class="text-xs text-slate-400">Hỗ trợ PDF, Word, Excel, Hình ảnh, Zip, Code,... (Tối đa 25MB)</p>
+                    </div>
+                    <div id="file-selected-info" class="hidden flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 text-left">
+                        <div class="flex items-center space-x-3 overflow-hidden">
+                            <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                                <i id="selected-file-icon" class="fa-solid fa-file"></i>
+                            </div>
+                            <div class="truncate">
+                                <p id="selected-file-name" class="text-sm font-semibold text-slate-800 truncate"></p>
+                                <p id="selected-file-size" class="text-xs text-slate-400"></p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="event.stopPropagation(); resetFileSelection();" class="text-slate-400 hover:text-red-500 p-1">
+                            <i class="fa-solid fa-trash-can text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Tiêu đề tài liệu</label>
+                    <input type="text" id="doc-title" required placeholder="Nhập tiêu đề hiển thị..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Mô tả ngắn (không bắt buộc)</label>
+                    <textarea id="doc-desc" rows="2" placeholder="Ghi chú hoặc mô tả về tài liệu này..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all resize-none"></textarea>
+                </div>
+
+                <!-- Progress Bar -->
+                <div id="upload-progress-container" class="hidden space-y-1.5">
+                    <div class="flex justify-between text-xs font-medium">
+                        <span id="upload-status-text" class="text-indigo-600">Đang tải lên...</span>
+                        <span id="upload-percent" class="text-slate-600">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                        <div id="upload-progress-bar" class="bg-indigo-600 h-2 rounded-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end space-x-3 pt-2">
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-all">Hủy</button>
+                    <button type="submit" id="submit-upload-btn" disabled class="px-5 py-2 rounded-xl text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                        Tải lên ngay
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="stats" id="stats" aria-live="polite"></div>
-  </header>
 
-  <div id="banner"></div>
-
-  <div class="drop" id="drop">
-    <p><strong>Thả tệp vào đây</strong><span class="hint">Mọi loại tệp: PDF, Word, ảnh, bảng tính, văn bản.</span></p>
-    <div class="btns">
-      <button class="btn primary" id="btnAdd" type="button">Chọn tệp</button>
-      <button class="btn" id="btnNote" type="button">Ghi chú mới</button>
+    <!-- Confirm Delete Modal -->
+    <div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-sm mx-4 rounded-2xl shadow-2xl border border-slate-200 p-6 text-center transform scale-95 transition-transform duration-300" id="delete-modal-content">
+            <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center text-xl mx-auto mb-3">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="font-bold text-slate-800 text-lg mb-1">Xác nhận xóa tài liệu</h3>
+            <p class="text-xs text-slate-500 mb-6">Bạn có chắc chắn muốn xóa tài liệu này khỏi kho chung? Hành động này không thể hoàn tác.</p>
+            <div class="flex space-x-3">
+                <button onclick="closeDeleteModal()" class="flex-1 py-2.5 rounded-xl text-sm font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all">Hủy</button>
+                <button id="confirm-delete-btn" class="flex-1 py-2.5 rounded-xl text-sm font-medium bg-red-600 hover:bg-red-700 text-white shadow-sm transition-all">Xóa</button>
+            </div>
+        </div>
     </div>
-    <input id="fileInput" type="file" multiple hidden>
-  </div>
 
-  <div class="tools">
-    <input class="search" id="q" type="search" placeholder="Tìm theo tên hoặc nội dung ghi chú" aria-label="Tìm tài liệu">
-    <div class="seg" role="group" aria-label="Lọc theo loại" id="seg"></div>
-    <select class="sort" id="sort" aria-label="Sắp xếp">
-      <option value="new">Mới nhất</option>
-      <option value="name">Tên A-Z</option>
-      <option value="size">Dung lượng</option>
-    </select>
-  </div>
-
-  <div class="list" id="list" aria-live="polite"></div>
-
-  <section class="panel">
-    <h2>Dữ liệu nằm ở đâu</h2>
-    <p>Tài liệu được lưu ngay trong trình duyệt này, trên thiết bị này. Mở lại trang bằng cùng trình duyệt là thấy. Xóa dữ liệu duyệt web hoặc dùng cửa sổ ẩn danh thì sẽ mất. Muốn chuyển sang máy khác hoặc giữ bản dự phòng, hãy tải file sao lưu rồi khôi phục ở nơi mới.</p>
-    <div class="btns">
-      <button class="btn" id="btnExport" type="button">Tải file sao lưu</button>
-      <button class="btn" id="btnImport" type="button">Khôi phục từ file sao lưu</button>
-      <input id="importInput" type="file" accept=".json,application/json" hidden>
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-3 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-sm">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-message">Thông báo thành công</span>
     </div>
-    <p id="usage"></p>
-  </section>
-</div>
 
-<div class="scrim" id="modal" hidden>
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-    <div class="sheet-head"><h3 id="mTitle"></h3><button class="btn sm" id="mClose" type="button">Đóng</button></div>
-    <div class="sheet-body" id="mBody"></div>
-    <div class="sheet-foot" id="mFoot"></div>
-  </div>
-</div>
-<div class="toast" id="toast" role="status" hidden></div>
+    <!-- Firebase SDK & App Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
-<script>
-(function () {
-  var DB_NAME = 'tu-tai-lieu', STORE = 'docs';
-  var state = { items: [], q: '', f: 'all', sort: 'new', confirmId: null, renameId: null, canDl: false };
-  var db = null, memOnly = false, dl = null, objUrl = null, toastTimer = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'kho-tai-lieu-chung-app';
+        let firebaseConfig = {};
+        try {
+            firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        } catch (e) {
+            console.error("Config parse error", e);
+        }
 
-  function $(s) { return document.querySelector(s); }
-  function h(tag, props) {
-    var e = document.createElement(tag);
-    for (var k in (props || {})) {
-      var v = props[k];
-      if (k === 'class') e.className = v;
-      else if (k.indexOf('on') === 0) e.addEventListener(k.slice(2), v);
-      else if (v === true) e.setAttribute(k, '');
-      else if (v !== false && v != null) e.setAttribute(k, v);
-    }
-    for (var i = 2; i < arguments.length; i++) {
-      var c = arguments[i];
-      if (c == null || c === false) continue;
-      e.append(c.nodeType ? c : document.createTextNode(c));
-    }
-    return e;
-  }
+        let app, db, auth, storage;
+        let documents = [];
+        let currentFilter = 'all';
+        let currentView = 'grid';
+        let selectedFile = null;
+        let deleteTargetId = null;
+        let deleteStoragePath = null;
 
-  /* ---------- lưu trữ ---------- */
-  function openDB() {
-    return new Promise(function (res, rej) {
-      try {
-        var r = indexedDB.open(DB_NAME, 1);
-        r.onupgradeneeded = function () { r.result.createObjectStore(STORE, { keyPath: 'id' }); };
-        r.onsuccess = function () { res(r.result); };
-        r.onerror = function () { rej(r.error); };
-      } catch (e) { rej(e); }
-    });
-  }
-  function tx(mode, fn) {
-    return new Promise(function (res, rej) {
-      var t = db.transaction(STORE, mode), out = fn(t.objectStore(STORE));
-      t.oncomplete = function () { res(out && out.result); };
-      t.onerror = t.onabort = function () { rej(t.error || new Error('tx')); };
-    });
-  }
-  function dbAll() { return memOnly ? Promise.resolve(state.items.slice()) : tx('readonly', function (s) { return s.getAll(); }); }
-  function dbPut(rec) {
-    if (memOnly) { var i = state.items.findIndex(function (x) { return x.id === rec.id; }); if (i >= 0) state.items[i] = rec; else state.items.push(rec); return Promise.resolve(); }
-    return tx('readwrite', function (s) { return s.put(rec); });
-  }
-  function dbDel(id) {
-    if (memOnly) { state.items = state.items.filter(function (x) { return x.id !== id; }); return Promise.resolve(); }
-    return tx('readwrite', function (s) { return s.delete(id); });
-  }
-  function uid() {
-    try { return crypto.randomUUID(); } catch (e) { return Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
-  }
+        // Initialize Firebase
+        try {
+            if (Object.keys(firebaseConfig).length > 0) {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                storage = getStorage(app);
 
-  /* ---------- tiện ích ---------- */
-  var dateFmt = new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-  function fmtSize(n) {
-    var f = function (x) { return x.toLocaleString('vi-VN', { maximumFractionDigits: 1 }); };
-    if (n < 1024) return n + ' B';
-    if (n < 1048576) return f(n / 1024) + ' KB';
-    if (n < 1073741824) return f(n / 1048576) + ' MB';
-    return f(n / 1073741824) + ' GB';
-  }
-  function ext(name) { var m = /\.([A-Za-z0-9]{1,6})$/.exec(name || ''); return m ? m[1].toLowerCase() : ''; }
-  function cat(r) { return r.kind === 'note' ? 'note' : (r.type || '').indexOf('image/') === 0 ? 'image' : 'file'; }
-  function tagText(r) { return r.kind === 'note' ? 'Ghi chú' : (ext(r.name) || 'tệp').slice(0, 5); }
-  function isText(r) {
-    return (r.type || '').indexOf('text/') === 0 || ['txt', 'md', 'csv', 'json', 'log', 'xml', 'html', 'css', 'js', 'ts', 'py', 'yml', 'yaml'].indexOf(ext(r.name)) >= 0;
-  }
-  function toast(msg) {
-    var t = $('#toast'); t.textContent = msg; t.hidden = false;
-    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.hidden = true; }, 3800);
-  }
-  function toDataURL(blob) {
-    return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(r.result); }; r.onerror = rej; r.readAsDataURL(blob); });
-  }
-  function fromDataURL(u) {
-    var i = u.indexOf(','), head = u.slice(5, i).split(';')[0], bin = atob(u.slice(i + 1)), a = new Uint8Array(bin.length);
-    for (var k = 0; k < bin.length; k++) a[k] = bin.charCodeAt(k);
-    return new Blob([a], { type: head || '' });
-  }
-  function saveOut(filename, data) {
-    if (!dl) { toast('Chức năng tải về chưa dùng được ở chế độ xem này.'); return Promise.resolve(); }
-    return dl.save({ filename: filename, data: data }).catch(function (e) {
-      if (e && e.code === 'declined') return;
-      toast(e && e.code === 'rejected_extension' ? 'Định dạng này không tải riêng được. Dùng file sao lưu để lấy lại toàn bộ.' : 'Không tải được tệp.');
-    });
-  }
+                const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                if (token) {
+                    signInWithCustomToken(auth, token).catch(() => signInAnonymously(auth));
+                } else {
+                    signInAnonymously(auth);
+                }
 
-  /* ---------- thao tác ---------- */
-  function addFiles(list) {
-    var files = Array.prototype.slice.call(list || []);
-    if (!files.length) return;
-    var now = Date.now(), recs = files.map(function (f) {
-      return { id: uid(), kind: 'file', name: f.name, type: f.type || '', size: f.size, created: now, updated: now, blob: f };
-    });
-    Promise.all(recs.map(dbPut)).then(function () {
-      state.items = state.items.concat(memOnly ? [] : recs);
-      if (!memOnly) { /* items đã nạp lại bên dưới */ }
-      return reload();
-    }).then(function () {
-      toast('Đã lưu ' + recs.length + ' tệp.');
-      try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
-    }).catch(function () { toast('Không lưu được. Có thể bộ nhớ trình duyệt đã đầy.'); reload(); });
-  }
-  function reload() {
-    return dbAll().then(function (all) { state.items = all; render(); updateUsage(); });
-  }
-  function updateUsage() {
-    var el = $('#usage');
-    try {
-      if (navigator.storage && navigator.storage.estimate) {
-        navigator.storage.estimate().then(function (e) {
-          el.textContent = e && e.usage != null ? 'Trình duyệt đang dùng khoảng ' + fmtSize(e.usage) + ' cho trang này.' : '';
-        }).catch(function () {});
-      }
-    } catch (e) {}
-  }
-  function viewItem(r) {
-    if (r.kind === 'note') return openNote(r);
-    openModal(r.name);
-    var body = $('#mBody'), foot = $('#mFoot');
-    var url = URL.createObjectURL(r.blob); objUrl = url;
-    if ((r.type || '').indexOf('image/') === 0) body.append(h('img', { src: url, alt: r.name }));
-    else if ((r.type || '').indexOf('video/') === 0) body.append(h('video', { src: url, controls: true }));
-    else if ((r.type || '').indexOf('audio/') === 0) body.append(h('audio', { src: url, controls: true }));
-    else if (isText(r)) {
-      var pre = h('pre', null, 'Đang đọc…'); body.append(pre);
-      r.blob.slice(0, 200000).text().then(function (t) { pre.textContent = t + (r.size > 200000 ? '\n\n… (chỉ hiện 200 KB đầu)' : ''); });
-    } else body.append(h('p', { class: 'meta' }, 'Loại tệp này không xem trước được. Hãy tải về để mở.'));
-    body.append(h('p', { class: 'meta' }, fmtSize(r.size) + ' · lưu ' + dateFmt.format(r.created)));
-    if (state.canDl) foot.append(h('button', { class: 'btn primary', type: 'button', onclick: function () { saveOut(r.name, r.blob); } }, 'Tải về'));
-  }
-  function openNote(r) {
-    var isNew = !r;
-    openModal(isNew ? 'Ghi chú mới' : 'Sửa ghi chú');
-    var title = h('input', { class: 'title', id: 'noteTitle', type: 'text', placeholder: 'Tiêu đề', 'aria-label': 'Tiêu đề ghi chú' });
-    var text = h('textarea', { id: 'noteBody', placeholder: 'Viết nội dung ở đây…', 'aria-label': 'Nội dung ghi chú' });
-    if (r) { title.value = r.name; text.value = r.text || ''; }
-    $('#mBody').append(title, text);
-    $('#mFoot').append(h('button', { class: 'btn primary', type: 'button', onclick: function () {
-      var now = Date.now(), body = text.value;
-      var rec = { id: r ? r.id : uid(), kind: 'note', name: title.value.trim() || 'Ghi chú chưa đặt tên', type: 'text/plain', size: new Blob([body]).size, text: body, created: r ? r.created : now, updated: now };
-      dbPut(rec).then(function () { closeModal(); toast('Đã lưu ghi chú.'); return reload(); }).catch(function () { toast('Không lưu được ghi chú.'); });
-    } }, 'Lưu'));
-    if (r && state.canDl) $('#mFoot').append(h('button', { class: 'btn', type: 'button', onclick: function () {
-      var n = r.name; if (!/\.(txt|md)$/i.test(n)) n += '.txt'; saveOut(n, r.text || '');
-    } }, 'Tải về .txt'));
-    setTimeout(function () { (isNew ? title : text).focus(); }, 0);
-  }
-  function openModal(title) {
-    closeModal();
-    $('#mTitle').textContent = title;
-    $('#modal').hidden = false;
-  }
-  function closeModal() {
-    $('#modal').hidden = true;
-    $('#mBody').textContent = ''; $('#mFoot').textContent = '';
-    if (objUrl) { URL.revokeObjectURL(objUrl); objUrl = null; }
-  }
-  function renameItem(r, name) {
-    name = (name || '').trim();
-    state.renameId = null;
-    if (!name || name === r.name) return render();
-    var rec = Object.assign({}, r, { name: name, updated: Date.now() });
-    dbPut(rec).then(reload);
-  }
-  function exportAll() {
-    var items = [];
-    return state.items.reduce(function (p, r) {
-      return p.then(function () {
-        var o = Object.assign({}, r); delete o.blob;
-        return (r.blob ? toDataURL(r.blob) : Promise.resolve(null)).then(function (d) { if (d) o.data = d; items.push(o); });
-      });
-    }, Promise.resolve()).then(function () {
-      var json = JSON.stringify({ app: 'tu-tai-lieu', v: 1, exported: Date.now(), items: items });
-      var d = new Date(), stamp = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-      return saveOut('tu-tai-lieu-' + stamp + '.json', new Blob([json], { type: 'application/json' }));
-    });
-  }
-  function importAll(file) {
-    if (!file) return;
-    file.text().then(function (t) {
-      var data = JSON.parse(t);
-      if (!data || data.app !== 'tu-tai-lieu' || !Array.isArray(data.items)) throw new Error('bad');
-      var recs = data.items.map(function (o) {
-        var r = Object.assign({}, o);
-        if (o.data) { r.blob = fromDataURL(o.data); delete r.data; }
-        return r;
-      });
-      return Promise.all(recs.map(dbPut)).then(function () { toast('Đã khôi phục ' + recs.length + ' mục.'); return reload(); });
-    }).catch(function () { toast('File này không phải bản sao lưu của Tủ Tài Liệu.'); });
-  }
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        initRealtimeSync();
+                    }
+                });
+            } else {
+                showOfflineFallback();
+            }
+        } catch (err) {
+            console.error("Firebase init error:", err);
+            showOfflineFallback();
+        }
 
-  /* ---------- hiển thị ---------- */
-  var FILTERS = [['all', 'Tất cả'], ['note', 'Ghi chú'], ['image', 'Ảnh'], ['file', 'Tệp']];
-  function renderSeg() {
-    var seg = $('#seg'); seg.textContent = '';
-    FILTERS.forEach(function (f) {
-      seg.append(h('button', { type: 'button', 'aria-pressed': String(state.f === f[0]), onclick: function () { state.f = f[0]; renderSeg(); render(); } }, f[1]));
-    });
-  }
-  function render() {
-    var total = state.items.reduce(function (n, r) { return n + (r.size || 0); }, 0);
-    $('#stats').textContent = '';
-    $('#stats').append(h('b', null, String(state.items.length)), ' mục · ', h('b', null, fmtSize(total)));
+        function showOfflineFallback() {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('empty-state').classList.remove('hidden');
+            document.getElementById('status-text').innerText = 'Chế độ ngoại tuyến';
+            document.getElementById('connection-status').className = 'flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200';
+            document.getElementById('connection-status').querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500';
+        }
 
-    var q = state.q.trim().toLowerCase();
-    var items = state.items.filter(function (r) {
-      if (state.f !== 'all' && cat(r) !== state.f) return false;
-      return !q || r.name.toLowerCase().indexOf(q) >= 0 || (r.text || '').toLowerCase().indexOf(q) >= 0;
-    });
-    items.sort(function (a, b) {
-      if (state.sort === 'name') return a.name.localeCompare(b.name, 'vi');
-      if (state.sort === 'size') return (b.size || 0) - (a.size || 0);
-      return b.updated - a.updated;
-    });
+        function initRealtimeSync() {
+            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'documents');
+            onSnapshot(colRef, (snapshot) => {
+                documents = [];
+                snapshot.forEach((docSnap) => {
+                    documents.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                // Sort by newest first
+                documents.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                
+                document.getElementById('loading-state').classList.add('hidden');
+                renderDocuments();
+                updateStats();
+            }, (error) => {
+                console.error("Firestore sync error:", error);
+                showToast("Lỗi đồng bộ dữ liệu kho tài liệu", "error");
+            });
+        }
 
-    var list = $('#list'); list.textContent = '';
-    if (!items.length) {
-      list.append(state.items.length
-        ? h('div', { class: 'empty' }, h('strong', null, 'Không có mục nào khớp'), 'Thử từ khóa khác hoặc chọn "Tất cả".')
-        : h('div', { class: 'empty' }, h('strong', null, 'Tủ còn trống'), 'Thả tệp vào ô phía trên hoặc bấm "Ghi chú mới" để bắt đầu.'));
-      return;
-    }
-    items.forEach(function (r) {
-      var main = h('div', { class: 'main' });
-      if (state.renameId === r.id) {
-        var inp = h('input', { class: 'rename', type: 'text', 'aria-label': 'Tên mới', value: r.name,
-          onkeydown: function (e) { if (e.key === 'Enter') renameItem(r, inp.value); if (e.key === 'Escape') { state.renameId = null; render(); } },
-          onblur: function () { renameItem(r, inp.value); } });
-        main.append(inp);
-        setTimeout(function () { inp.focus(); inp.select(); }, 0);
-      } else {
-        main.append(h('button', { class: 'name', type: 'button', onclick: function () { viewItem(r); } }, r.name));
-      }
-      main.append(h('div', { class: 'meta' }, fmtSize(r.size || 0) + ' · ' + dateFmt.format(r.updated)));
+        // Global functions exposed to window
+        window.setCategoryFilter = function(category) {
+            currentFilter = category;
+            document.querySelectorAll('.cat-pill').forEach(btn => {
+                if (btn.getAttribute('data-category') === category) {
+                    btn.className = 'cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-indigo-600 text-white shadow-sm';
+                } else {
+                    btn.className = 'cat-pill px-3 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200';
+                }
+            });
+            renderDocuments();
+        };
 
-      var acts = h('div', { class: 'acts' });
-      if (state.confirmId === r.id) {
-        acts.append(h('span', { class: 'ask' }, 'Xóa vĩnh viễn?'),
-          h('button', { class: 'btn sm danger', type: 'button', onclick: function () { state.confirmId = null; dbDel(r.id).then(reload); } }, 'Xóa'),
-          h('button', { class: 'btn sm', type: 'button', onclick: function () { state.confirmId = null; render(); } }, 'Hủy'));
-      } else {
-        acts.append(h('button', { class: 'btn sm', type: 'button', onclick: function () { viewItem(r); } }, r.kind === 'note' ? 'Sửa' : 'Mở'));
-        if (state.canDl) acts.append(h('button', { class: 'btn sm', type: 'button', onclick: function () {
-          if (r.kind === 'note') { var n = r.name; if (!/\.(txt|md)$/i.test(n)) n += '.txt'; saveOut(n, r.text || ''); } else saveOut(r.name, r.blob);
-        } }, 'Tải về'));
-        acts.append(h('button', { class: 'btn sm', type: 'button', onmousedown: function (e) { e.preventDefault(); }, onclick: function () { state.renameId = r.id; render(); } }, 'Đổi tên'),
-          h('button', { class: 'btn sm danger', type: 'button', onclick: function () { state.confirmId = r.id; render(); } }, 'Xóa'));
-      }
-      list.append(h('div', { class: 'row' }, h('span', { class: 'tag ' + cat(r) }, tagText(r)), main, acts));
-    });
-  }
+        window.setViewMode = function(mode) {
+            currentView = mode;
+            const gridBtn = document.getElementById('view-grid-btn');
+            const listBtn = document.getElementById('view-list-btn');
+            const gridEl = document.getElementById('documents-grid');
+            const listEl = document.getElementById('documents-list');
 
-  /* ---------- nối sự kiện ---------- */
-  $('#btnAdd').addEventListener('click', function () { $('#fileInput').click(); });
-  $('#fileInput').addEventListener('change', function (e) { addFiles(e.target.files); e.target.value = ''; });
-  $('#btnNote').addEventListener('click', function () { openNote(null); });
-  $('#q').addEventListener('input', function (e) { state.q = e.target.value; render(); });
-  $('#sort').addEventListener('change', function (e) { state.sort = e.target.value; render(); });
-  $('#mClose').addEventListener('click', closeModal);
-  $('#modal').addEventListener('mousedown', function (e) { if (e.target === e.currentTarget) closeModal(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('#modal').hidden) closeModal(); });
-  $('#btnExport').addEventListener('click', function () { exportAll(); });
-  $('#btnImport').addEventListener('click', function () { $('#importInput').click(); });
-  $('#importInput').addEventListener('change', function (e) { importAll(e.target.files[0]); e.target.value = ''; });
-  var drop = $('#drop');
-  ['dragenter', 'dragover'].forEach(function (n) { drop.addEventListener(n, function (e) { e.preventDefault(); drop.classList.add('over'); }); });
-  ['dragleave', 'drop'].forEach(function (n) { drop.addEventListener(n, function (e) { e.preventDefault(); drop.classList.remove('over'); }); });
-  drop.addEventListener('drop', function (e) { addFiles(e.dataTransfer && e.dataTransfer.files); });
-  window.addEventListener('dragover', function (e) { e.preventDefault(); });
-  window.addEventListener('drop', function (e) { e.preventDefault(); });
+            if (mode === 'grid') {
+                gridBtn.className = 'p-1.5 rounded-lg text-indigo-600 bg-white shadow-sm transition-all';
+                listBtn.className = 'p-1.5 rounded-lg text-slate-400 hover:text-slate-600 transition-all';
+                gridEl.classList.remove('hidden');
+                listEl.classList.add('hidden');
+            } else {
+                listBtn.className = 'p-1.5 rounded-lg text-indigo-600 bg-white shadow-sm transition-all';
+                gridBtn.className = 'p-1.5 rounded-lg text-slate-400 hover:text-slate-600 transition-all';
+                listEl.classList.remove('hidden');
+                gridEl.classList.add('hidden');
+            }
+        };
 
-  /* ---------- khởi động ---------- */
-  renderSeg(); render();
-  try {
-    if (window.claude && window.claude.use) {
-      window.claude.use('downloads').then(function (d) { dl = d; state.canDl = !!d; $('#btnExport').disabled = !d; render(); }).catch(function () {});
-    }
-  } catch (e) {}
-  $('#btnExport').disabled = true;
-  openDB().then(function (d) { db = d; return reload(); }).catch(function () {
-    memOnly = true;
-    $('#banner').append(h('div', { class: 'warn' }, 'Trình duyệt đang chặn lưu trữ nên tài liệu chỉ giữ được đến khi đóng trang. Hãy bật dữ liệu trang web hoặc tắt chế độ ẩn danh.'));
-    render();
-  });
-})();
-</script>
+        window.filterDocuments = function() {
+            renderDocuments();
+        };
 
-</body></html>
+        function getCategoryType(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (['pdf'].includes(ext)) return 'pdf';
+            if (['doc', 'docx', 'txt', 'rtf', 'odt'].includes(ext)) return 'word';
+            if (['xls', 'xlsx', 'csv'].includes(ext)) return 'excel';
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext)) return 'image';
+            if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return 'archive';
+            if (['js', 'html', 'css', 'py', 'json', 'cpp', 'java', 'ts'].includes(ext)) return 'code';
+            return 'other';
+        }
+
+        function getFileIcon(category) {
+            switch(category) {
+                case 'pdf': return { icon: 'fa-file-pdf', color: 'text-red-500 bg-red-50' };
+                case 'word': return { icon: 'fa-file-word', color: 'text-blue-500 bg-blue-50' };
+                case 'excel': return { icon: 'fa-file-excel', color: 'text-emerald-500 bg-emerald-50' };
+                case 'image': return { icon: 'fa-file-image', color: 'text-purple-500 bg-purple-50' };
+                case 'archive': return { icon: 'fa-file-zipper', color: 'text-amber-500 bg-amber-50' };
+                case 'code': return { icon: 'fa-file-code', color: 'text-cyan-500 bg-cyan-50' };
+                default: return { icon: 'fa-file-lines', color: 'text-slate-500 bg-slate-100' };
+            }
+        }
+
+        function formatBytes(bytes, decimals = 2) {
+            if (!bytes || bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+
+        function renderDocuments() {
+            const searchQuery = document.getElementById('search-input').value.toLowerCase();
+            const gridEl = document.getElementById('documents-grid');
+            const tbodyEl = document.getElementById('documents-tbody');
+            const emptyEl = document.getElementById('empty-state');
+
+            const filtered = documents.filter(doc => {
+                const matchesCategory = currentFilter === 'all' || doc.category === currentFilter;
+                const matchesSearch = doc.title.toLowerCase().includes(searchQuery) || (doc.description && doc.description.toLowerCase().includes(searchQuery)) || doc.fileName.toLowerCase().includes(searchQuery);
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                emptyEl.classList.remove('hidden');
+                gridEl.innerHTML = '';
+                tbodyEl.innerHTML = '';
+                return;
+            }
+
+            emptyEl.classList.add('hidden');
+
+            let gridHtml = '';
+            let tbodyHtml = '';
+
+            filtered.forEach(doc => {
+                const iconInfo = getFileIcon(doc.category);
+                const dateStr = doc.createdAt ? new Date(doc.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Vừa xong';
+                
+                // Grid Card
+                gridHtml += `
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+                        <div>
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="w-12 h-12 rounded-xl ${iconInfo.color} flex items-center justify-center text-xl flex-shrink-0">
+                                    <i class="fa-solid ${iconInfo.icon}"></i>
+                                </div>
+                                <div class="flex items-center space-x-1">
+                                    <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider bg-slate-100 text-slate-600">${doc.category}</span>
+                                    <button onclick="promptDelete('${doc.id}', '${doc.storagePath}')" class="w-8 h-8 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100" title="Xóa tài liệu">
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-base mb-1 line-clamp-1" title="${doc.title}">${doc.title}</h4>
+                            <p class="text-xs text-slate-500 mb-3 line-clamp-2 min-h-[32px]">${doc.description || 'Không có mô tả'}</p>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between text-xs text-slate-400 mb-4 pt-3 border-t border-slate-100">
+                                <span>${formatBytes(doc.size)}</span>
+                                <span>${dateStr}</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <a href="${doc.downloadURL}" target="_blank" download class="flex-1 inline-flex items-center justify-center space-x-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 py-2.5 rounded-xl text-xs font-semibold transition-all">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Tải xuống</span>
+                                </a>
+                                <a href="${doc.downloadURL}" target="_blank" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold transition-all" title="Xem trước">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // List Row
+                tbodyHtml += `
+                    <tr class="hover:bg-slate-50/80 transition-all group">
+                        <td class="py-3 px-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-lg ${iconInfo.color} flex items-center justify-center text-sm flex-shrink-0">
+                                    <i class="fa-solid ${iconInfo.icon}"></i>
+                                </div>
+                                <div class="max-w-xs sm:max-w-sm truncate">
+                                    <p class="font-semibold text-slate-800 truncate" title="${doc.title}">${doc.title}</p>
+                                    <p class="text-xs text-slate-400 truncate">${doc.fileName}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider bg-slate-100 text-slate-600">${doc.category}</span>
+                        </td>
+                        <td class="py-3 px-4 text-slate-500 text-xs">${formatBytes(doc.size)}</td>
+                        <td class="py-3 px-4 text-slate-500 text-xs">${dateStr}</td>
+                        <td class="py-3 px-4 text-right">
+                            <div class="flex items-center justify-end space-x-2">
+                                <a href="${doc.downloadURL}" target="_blank" download class="p-2 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-semibold transition-all" title="Tải xuống">
+                                    <i class="fa-solid fa-download"></i>
+                                </a>
+                                <a href="${doc.downloadURL}" target="_blank" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold transition-all" title="Xem trước">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <button onclick="promptDelete('${doc.id}', '${doc.storagePath}')" class="p-2 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100" title="Xóa">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            gridEl.innerHTML = gridHtml;
+            tbodyEl.innerHTML = tbodyHtml;
+        }
+
+        function updateStats() {
+            const totalFiles = documents.length;
+            const totalBytes = documents.reduce((acc, curr) => acc + (curr.size || 0), 0);
+            
+            document.getElementById('stat-total-files').innerText = totalFiles;
+            document.getElementById('stat-total-size').innerText = formatBytes(totalBytes);
+        }
+
+        // Upload Modal interactions
+        window.openUploadModal = function() {
+            const modal = document.getElementById('upload-modal');
+            const content = document.getElementById('upload-modal-content');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        };
+
+        window.closeUploadModal = function() {
+            const modal = document.getElementById('upload-modal');
+            const content = document.getElementById('upload-modal-content');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            resetUploadForm();
+        };
+
+        window.handleFileSelect = function(input) {
+            if (input.files && input.files[0]) {
+                selectedFile = input.files[0];
+                if (selectedFile.size > 25 * 1024 * 1024) {
+                    showToast("Dung lượng file vượt quá giới hạn 25MB", "error");
+                    resetFileSelection();
+                    return;
+                }
+                
+                document.getElementById('dropzone-content').classList.add('hidden');
+                const fileInfoEl = document.getElementById('file-selected-info');
+                fileInfoEl.classList.remove('hidden');
+                fileInfoEl.classList.add('flex');
+
+                document.getElementById('selected-file-name').innerText = selectedFile.name;
+                document.getElementById('selected-file-size').innerText = formatBytes(selectedFile.size);
+
+                const cat = getCategoryType(selectedFile.name);
+                const iconInfo = getFileIcon(cat);
+                document.getElementById('selected-file-icon').className = `fa-solid ${iconInfo.icon}`;
+
+                // Auto fill title if empty
+                const titleInput = document.getElementById('doc-title');
+                if (!titleInput.value) {
+                    const nameWithoutExt = selectedFile.name.substring(0, selectedFile.name.lastIndexOf('.')) || selectedFile.name;
+                    titleInput.value = nameWithoutExt;
+                }
+
+                document.getElementById('submit-upload-btn').removeAttribute('disabled');
+            }
+        };
+
+        window.resetFileSelection = function() {
+            selectedFile = null;
+            document.getElementById('file-input').value = '';
+            document.getElementById('dropzone-content').classList.remove('hidden');
+            const fileInfoEl = document.getElementById('file-selected-info');
+            fileInfoEl.classList.add('hidden');
+            fileInfoEl.classList.remove('flex');
+            document.getElementById('submit-upload-btn').setAttribute('disabled', 'true');
+        };
+
+        function resetUploadForm() {
+            resetFileSelection();
+            document.getElementById('upload-form').reset();
+            document.getElementById('upload-progress-container').classList.add('hidden');
+            document.getElementById('upload-progress-bar').style.width = '0%';
+        }
+
+        window.handleUpload = async function(e) {
+            e.preventDefault();
+            if (!selectedFile) return;
+
+            const title = document.getElementById('doc-title').value.trim();
+            const desc = document.getElementById('doc-desc').value.trim();
+            const submitBtn = document.getElementById('submit-upload-btn');
+            const progressContainer = document.getElementById('upload-progress-container');
+            const progressBar = document.getElementById('upload-progress-bar');
+            const progressText = document.getElementById('upload-percent');
+
+            submitBtn.setAttribute('disabled', 'true');
+            progressContainer.classList.remove('hidden');
+
+            try {
+                // Simulate progress for smooth UI feedback
+                progressBar.style.width = '30%';
+                progressText.innerText = '30%';
+
+                const storagePath = `documents/${Date.now()}_${selectedFile.name}`;
+                const fileRef = ref(storage, storagePath);
+
+                progressBar.style.width = '60%';
+                progressText.innerText = '60%';
+
+                const snapshot = await uploadBytes(fileRef, selectedFile);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+
+                progressBar.style.width = '90%';
+                progressText.innerText = '90%';
+
+                const category = getCategoryType(selectedFile.name);
+
+                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'documents');
+                await addDoc(colRef, {
+                    title: title || selectedFile.name,
+                    description: desc,
+                    fileName: selectedFile.name,
+                    size: selectedFile.size,
+                    category: category,
+                    downloadURL: downloadURL,
+                    storagePath: storagePath,
+                    createdAt: Date.now(),
+                    uploadedBy: auth.currentUser ? auth.currentUser.uid : 'anonymous'
+                });
+
+                progressBar.style.width = '100%';
+                progressText.innerText = '100%';
+
+                showToast("Tải lên tài liệu thành công!", "success");
+                closeUploadModal();
+            } catch (err) {
+                console.error("Upload error:", err);
+                showToast("Lỗi khi tải lên tài liệu. Vui lòng thử lại.", "error");
+                submitBtn.removeAttribute('disabled');
+                progressContainer.classList.add('hidden');
+            }
+        };
+
+        // Delete Modal interactions
+        window.promptDelete = function(docId, storagePath) {
+            deleteTargetId = docId;
+            deleteStoragePath = storagePath;
+            const modal = document.getElementById('delete-modal');
+            const content = document.getElementById('delete-modal-content');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        };
+
+        window.closeDeleteModal = function() {
+            deleteTargetId = null;
+            deleteStoragePath = null;
+            const modal = document.getElementById('delete-modal');
+            const content = document.getElementById('delete-modal-content');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+        };
+
+        document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+            if (!deleteTargetId) return;
+            const btn = document.getElementById('confirm-delete-btn');
+            btn.innerText = 'Đang xóa...';
+            btn.setAttribute('disabled', 'true');
+
+            try {
+                // Delete from Firestore
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'documents', deleteTargetId));
+
+                // Try deleting from Storage if path exists
+                if (deleteStoragePath) {
+                    try {
+                        const fileRef = ref(storage, deleteStoragePath);
+                        await deleteObject(fileRef);
+                    } catch (storageErr) {
+                        console.warn("Storage delete warning:", storageErr);
+                    }
+                }
+
+                showToast("Đã xóa tài liệu thành công", "success");
+                closeDeleteModal();
+            } catch (err) {
+                console.error("Delete error:", err);
+                showToast("Không thể xóa tài liệu", "error");
+            } finally {
+                btn.innerText = 'Xóa';
+                btn.removeAttribute('disabled');
+            }
+        });
+
+        // Toast notification helper
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.innerText = message;
+            if (type === 'success') {
+                toastIcon.className = 'fa-solid fa-circle-check text-emerald-400';
+            } else {
+                toastIcon.className = 'fa-solid fa-circle-exclamation text-red-400';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Drag and drop support on dropzone
+        const dropzone = document.getElementById('dropzone');
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropzone.classList.add('border-indigo-500', 'bg-indigo-50/50');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('border-indigo-500', 'bg-indigo-50/50');
+            }, false);
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files && files.length > 0) {
+                document.getElementById('file-input').files = files;
+                handleFileSelect(document.getElementById('file-input'));
+            }
+        }, false);
+    </script>
+</body>
+</html>
