@@ -158,9 +158,8 @@
 
             <form id="upload-form" onsubmit="handleUpload(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Chọn file PDF, Ảnh hoặc Video</label>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Chọn file / Video (Hỗ trợ mọi định dạng)</label>
                     <input type="file" id="file-input" required onchange="handleFileSelect(this)" class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-xl cursor-pointer">
-                    <p class="text-[11px] text-slate-400 mt-1">Lưu ý: Hỗ trợ tuyệt đối file PDF, ảnh và video dung lượng lớn.</p>
                 </div>
 
                 <div>
@@ -176,11 +175,11 @@
                 <!-- Progress Bar Container -->
                 <div id="upload-progress-container" class="hidden space-y-2 pt-2">
                     <div class="flex justify-between text-xs font-medium text-slate-600">
-                        <span id="progress-text">Đang tải lên... 0%</span>
-                        <span id="progress-percent">0%</span>
+                        <span id="progress-text">Đang tải lên hệ thống...</span>
+                        <span id="progress-percent">Vui lòng đợi</span>
                     </div>
                     <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                        <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300 w-full animate-pulse"></div>
                     </div>
                 </div>
 
@@ -201,7 +200,7 @@
         </div>
     </footer>
 
-    <!-- Firebase & Cloudinary Script -->
+    <!-- Firebase & Direct Upload Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -216,10 +215,6 @@
             appId: "1:96814033859:web:bcbee87a3b7713cc4c6b76",
             measurementId: "G-25FE89T3TY"
         };
-
-        // Cấu hình Cloudinary (Dùng preset "database" mới tạo)
-        const CLOUD_NAME = "l4vszdjn";
-        const UPLOAD_PRESET = "database";
 
         let db;
         let documents = [];
@@ -283,7 +278,7 @@
             }
         }
 
-        window.handleUpload = function(event) {
+        window.handleUpload = async function(event) {
             event.preventDefault();
             const fileInput = document.getElementById('file-input');
             const title = document.getElementById('doc-title').value;
@@ -298,71 +293,49 @@
             document.getElementById('upload-progress-container').classList.remove('hidden');
 
             const fileCategory = getFileCategory(file.name);
-            
-            // Định tuyến thông minh: Video dùng cổng video, PDF và ảnh dùng cổng image để tránh lỗi 400 raw
-            let resourceType = 'image';
-            if (fileCategory === 'video') {
-                resourceType = 'video';
-            } else {
-                resourceType = 'image';
-            }
 
+            // Dùng Catbox API upload trực tiếp mọi file không giới hạn định dạng
             const formData = new FormData();
-            formData.append("file", file);
-            formData.append("upload_preset", UPLOAD_PRESET);
+            formData.append("reqtype", "fileupload-api");
+            formData.append("fileToUpload", file);
 
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, true);
+            try {
+                const response = await fetch("https://catbox.moe/user/api.php", {
+                    method: "POST",
+                    body: formData
+                });
 
-            xhr.upload.onprogress = function(e) {
-                if (e.lengthComputable) {
-                    const percent = Math.round((e.loaded / e.total) * 100);
-                    document.getElementById('progress-bar').style.width = percent + '%';
-                    document.getElementById('progress-text').innerText = `Đang tải lên... ${percent}%`;
-                    document.getElementById('progress-percent').innerText = percent + '%';
+                if (!response.ok) {
+                    throw new Error("Lỗi kết nối máy chủ lưu trữ file.");
                 }
-            };
 
-            xhr.onload = async function() {
+                const downloadURL = await response.text();
+                
+                if (!downloadURL.startsWith("http")) {
+                    throw new Error("Phản hồi từ server lưu trữ không hợp lệ.");
+                }
+
+                const newDoc = {
+                    title: title,
+                    description: desc,
+                    fileName: file.name,
+                    fileSize: formatBytes(file.size),
+                    fileType: fileCategory,
+                    fileUrl: downloadURL.trim(),
+                    createdAt: new Date().toISOString()
+                };
+
+                await addDoc(collection(db, "documents"), newDoc);
+                closeUploadModal();
+                loadDocuments();
+            } catch (err) {
+                console.error("Upload Error:", err);
+                alert("Lỗi tải lên: " + err.message);
+            } finally {
                 submitBtn.disabled = false;
                 document.getElementById('submit-text').innerText = "Xác nhận tải lên";
                 document.getElementById('upload-progress-container').classList.add('hidden');
-
-                if (xhr.status === 200) {
-                    const response = JSON.parse(xhr.responseText);
-                    const downloadURL = response.secure_url;
-
-                    const newDoc = {
-                        title: title,
-                        description: desc,
-                        fileName: file.name,
-                        fileSize: formatBytes(file.size),
-                        fileType: fileCategory,
-                        fileUrl: downloadURL,
-                        createdAt: new Date().toISOString()
-                    };
-
-                    try {
-                        await addDoc(collection(db, "documents"), newDoc);
-                        closeUploadModal();
-                        loadDocuments();
-                    } catch (err) {
-                        alert("Lỗi lưu dữ liệu Firestore: " + err.message);
-                    }
-                } else {
-                    console.error("Cloudinary Error Response:", xhr.responseText);
-                    alert("Lỗi tải lên Cloudinary. Mã lỗi: " + xhr.status + ". Hãy chắc chắn định dạng file là PDF, Ảnh hoặc Video.");
-                }
-            };
-
-            xhr.onerror = function() {
-                submitBtn.disabled = false;
-                document.getElementById('submit-text').innerText = "Xác nhận tải lên";
-                document.getElementById('upload-progress-container').classList.add('hidden');
-                alert("Lỗi kết nối mạng khi tải lên!");
-            };
-
-            xhr.send(formData);
+            }
         }
 
         window.deleteDocument = async function(id) {
@@ -394,7 +367,7 @@
             const player = document.getElementById('video-player');
             document.getElementById('video-modal-title').innerText = title;
             player.src = url;
-            modal.classList.remove('hidden');
+            modal.classList.net ? modal.classList.remove('hidden') : modal.classList.remove('hidden');
             player.play();
         }
 
