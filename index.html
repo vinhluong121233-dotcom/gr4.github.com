@@ -216,9 +216,9 @@
             measurementId: "G-25FE89T3TY"
         };
 
-        // Cấu hình Cloudinary
+        // Cấu hình Cloudinary (Đã dùng preset mới "database")
         const CLOUD_NAME = "l4vszdjn";
-        const UPLOAD_PRESET = "ml_default";
+        const UPLOAD_PRESET = "database";
 
         let db;
         let documents = [];
@@ -303,7 +303,7 @@
             formData.append("upload_preset", UPLOAD_PRESET);
 
             const xhr = new XMLHttpRequest();
-            // Dùng endpoint /auto/upload để Cloudinary tự nhận diện file PDF, Word, Video hay Ảnh mà không bao giờ lỗi 400
+            // Sử dụng cổng auto để Cloudinary tự nhận diện mọi loại file (PDF, ảnh, video,...)
             xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, true);
 
             xhr.upload.onprogress = function(e) {
@@ -343,7 +343,7 @@
                     }
                 } else {
                     console.error("Cloudinary Error Response:", xhr.responseText);
-                    alert("Lỗi tải lên Cloudinary. Mã lỗi: " + xhr.status + ". Hãy kiểm tra lại kết nối.");
+                    alert("Lỗi tải lên Cloudinary. Mã lỗi: " + xhr.status);
                 }
             };
 
