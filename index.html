@@ -156,4 +156,347 @@
                 </button>
             </div>
 
-            <form id="upload-form
+            <form id="upload-form" onsubmit="handleUpload(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Chọn file / Video</label>
+                    <input type="file" id="file-input" required onchange="handleFileSelect(this)" class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-xl cursor-pointer">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Tên hiển thị</label>
+                    <input type="text" id="doc-title" required placeholder="Nhập tiêu đề..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Mô tả ngắn</label>
+                    <textarea id="doc-desc" rows="2" placeholder="Nội dung tóm tắt..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 resize-none"></textarea>
+                </div>
+
+                <!-- Progress Bar Container -->
+                <div id="upload-progress-container" class="hidden space-y-2 pt-2">
+                    <div class="flex justify-between text-xs font-medium text-slate-600">
+                        <span id="progress-text">Đang tải lên... 0%</span>
+                        <span id="progress-percent">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                        <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end space-x-3 pt-3">
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">Hủy</button>
+                    <button type="submit" id="submit-btn" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-sm transition-all">
+                        <span id="submit-text">Xác nhận tải lên</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            Kho Tài Liệu & Video Chung • Lưu trữ công khai an toàn.
+        </div>
+    </footer>
+
+    <!-- Firebase & Cloudinary Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Cấu hình Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAD2xON3CncqxQCG8UR-xnDvnzbDHUYpKY",
+            authDomain: "gr4-web.firebaseapp.com",
+            projectId: "gr4-web",
+            storageBucket: "gr4-web.firebasestorage.app",
+            messagingSenderId: "96814033859",
+            appId: "1:96814033859:web:bcbee87a3b7713cc4c6b76",
+            measurementId: "G-25FE89T3TY"
+        };
+
+        // Cấu hình Cloudinary
+        const CLOUD_NAME = "l4vszdjn";
+        const UPLOAD_PRESET = "ml_default";
+
+        let db;
+        let documents = [];
+        let currentCategory = 'all';
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            updateStatus(true);
+            loadDocuments();
+        } catch (error) {
+            console.error("Firebase init error:", error);
+            updateStatus(false);
+        }
+
+        function updateStatus(isOnline) {
+            const statusEl = document.getElementById('connection-status');
+            const textEl = document.getElementById('status-text');
+            if (isOnline) {
+                statusEl.className = "hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
+                statusEl.querySelector('span').className = "w-2 h-2 rounded-full bg-emerald-500";
+                textEl.innerText = "Trực tuyến";
+            } else {
+                statusEl.className = "hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200";
+                statusEl.querySelector('span').className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
+                textEl.innerText = "Chế độ ngoại tuyến";
+            }
+        }
+
+        async function loadDocuments() {
+            if (!db) return;
+            try {
+                const querySnapshot = await getDocs(collection(db, "documents"));
+                documents = [];
+                querySnapshot.forEach((docSnap) => {
+                    documents.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                renderDocuments();
+            } catch (e) {
+                console.error("Error loading documents: ", e);
+            }
+        }
+
+        window.openUploadModal = function() {
+            document.getElementById('upload-modal').classList.remove('hidden');
+        }
+
+        window.closeUploadModal = function() {
+            document.getElementById('upload-modal').classList.add('hidden');
+            document.getElementById('upload-form').reset();
+            document.getElementById('upload-progress-container').classList.add('hidden');
+        }
+
+        window.handleFileSelect = function(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const titleInput = document.getElementById('doc-title');
+                if (!titleInput.value) {
+                    titleInput.value = file.name;
+                }
+            }
+        }
+
+        window.handleUpload = function(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('file-input');
+            const title = document.getElementById('doc-title').value;
+            const desc = document.getElementById('doc-desc').value;
+            const file = fileInput.files[0];
+
+            if (!file) return;
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            document.getElementById('submit-text').innerText = "Đang tải lên...";
+            document.getElementById('upload-progress-container').classList.remove('hidden');
+
+            const fileCategory = getFileCategory(file.name);
+
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", UPLOAD_PRESET);
+
+            const xhr = new XMLHttpRequest();
+            // Dùng endpoint /auto/upload để Cloudinary tự nhận diện file PDF, Word, Video hay Ảnh mà không bao giờ lỗi 400
+            xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, true);
+
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    document.getElementById('progress-bar').style.width = percent + '%';
+                    document.getElementById('progress-text').innerText = `Đang tải lên... ${percent}%`;
+                    document.getElementById('progress-percent').innerText = percent + '%';
+                }
+            };
+
+            xhr.onload = async function() {
+                submitBtn.disabled = false;
+                document.getElementById('submit-text').innerText = "Xác nhận tải lên";
+                document.getElementById('upload-progress-container').classList.add('hidden');
+
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    const downloadURL = response.secure_url;
+
+                    const newDoc = {
+                        title: title,
+                        description: desc,
+                        fileName: file.name,
+                        fileSize: formatBytes(file.size),
+                        fileType: fileCategory,
+                        fileUrl: downloadURL,
+                        createdAt: new Date().toISOString()
+                    };
+
+                    try {
+                        await addDoc(collection(db, "documents"), newDoc);
+                        closeUploadModal();
+                        loadDocuments();
+                    } catch (err) {
+                        alert("Lỗi lưu dữ liệu Firestore: " + err.message);
+                    }
+                } else {
+                    console.error("Cloudinary Error Response:", xhr.responseText);
+                    alert("Lỗi tải lên Cloudinary. Mã lỗi: " + xhr.status + ". Hãy kiểm tra lại kết nối.");
+                }
+            };
+
+            xhr.onerror = function() {
+                submitBtn.disabled = false;
+                document.getElementById('submit-text').innerText = "Xác nhận tải lên";
+                document.getElementById('upload-progress-container').classList.add('hidden');
+                alert("Lỗi kết nối mạng khi tải lên!");
+            };
+
+            xhr.send(formData);
+        }
+
+        window.deleteDocument = async function(id) {
+            if (confirm("Bạn có chắc chắn muốn xóa tài liệu này không?")) {
+                try {
+                    await deleteDoc(doc(db, "documents", id));
+                    loadDocuments();
+                } catch (e) {
+                    alert("Không thể xóa: " + e.message);
+                }
+            }
+        }
+
+        window.setCategory = function(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.className = "category-btn px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap";
+            });
+            document.getElementById('cat-' + cat).className = "category-btn px-3.5 py-2 rounded-xl text-xs font-medium bg-indigo-600 text-white transition-all whitespace-nowrap";
+            renderDocuments();
+        }
+
+        window.filterDocuments = function() {
+            renderDocuments();
+        }
+
+        window.playVideo = function(url, title) {
+            const modal = document.getElementById('video-modal');
+            const player = document.getElementById('video-player');
+            document.getElementById('video-modal-title').innerText = title;
+            player.src = url;
+            modal.classList.remove('hidden');
+            player.play();
+        }
+
+        window.closeVideoModal = function() {
+            const modal = document.getElementById('video-modal');
+            const player = document.getElementById('video-player');
+            player.pause();
+            player.src = '';
+            modal.classList.add('hidden');
+        }
+
+        function renderDocuments() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const grid = document.getElementById('document-grid');
+            const emptyState = document.getElementById('empty-state');
+
+            let filtered = documents.filter(doc => {
+                const matchCat = currentCategory === 'all' || doc.fileType === currentCategory;
+                const matchSearch = doc.title.toLowerCase().includes(searchTerm) || (doc.description && doc.description.toLowerCase().includes(searchTerm));
+                return matchCat && matchSearch;
+            });
+
+            document.getElementById('stat-total').innerText = documents.length;
+            const totalVideos = documents.filter(d => d.fileType === 'video').length;
+            document.getElementById('stat-videos').innerText = totalVideos;
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                grid.classList.add('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                grid.classList.remove('hidden');
+
+                grid.innerHTML = filtered.map(doc => `
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="w-10 h-10 rounded-xl ${getFileIconBg(doc.fileType)} flex items-center justify-center text-lg">
+                                    <i class="${getFileIcon(doc.fileType)}"></i>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-600">${doc.fileType}</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 text-sm mb-1 line-clamp-1" title="${doc.title}">${doc.title}</h4>
+                            <p class="text-xs text-slate-500 mb-4 line-clamp-2">${doc.description || 'Không có mô tả chi tiết.'}</p>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <span class="text-[11px] text-slate-400 font-medium">${doc.fileSize || 'FILE'}</span>
+                            <div class="flex items-center space-x-2">
+                                ${doc.fileType === 'video' ? `
+                                    <button onclick="playVideo('${doc.fileUrl}', '${doc.title}')" class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-white text-xs font-medium transition-colors">
+                                        <i class="fa-solid fa-play"></i>
+                                        <span>Xem</span>
+                                    </button>
+                                ` : ''}
+                                <a href="${doc.fileUrl}" target="_blank" download="${doc.fileName}" class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white text-xs font-medium transition-colors">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Tải</span>
+                                </a>
+                                <button onclick="deleteDocument('${doc.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-400 hover:text-rose-600 text-xs transition-colors" title="Xóa">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function getFileCategory(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (['mp4', 'webm', 'ogg', 'mov', 'mkv', 'avi'].includes(ext)) return 'video';
+            if (['pdf'].includes(ext)) return 'pdf';
+            if (['doc', 'docx'].includes(ext)) return 'word';
+            if (['xls', 'xlsx', 'csv'].includes(ext)) return 'excel';
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return 'image';
+            if (['js', 'html', 'css', 'py', 'java', 'c', 'cpp', 'json'].includes(ext)) return 'code';
+            return 'other';
+        }
+
+        function getFileIcon(type) {
+            switch(type) {
+                case 'video': return 'fa-solid fa-video text-purple-600';
+                case 'pdf': return 'fa-solid fa-file-pdf text-rose-500';
+                case 'word': return 'fa-solid fa-file-word text-blue-500';
+                case 'excel': return 'fa-solid fa-file-excel text-emerald-500';
+                case 'image': return 'fa-solid fa-file-image text-amber-500';
+                case 'code': return 'fa-solid fa-file-code text-indigo-500';
+                default: return 'fa-solid fa-file text-slate-500';
+            }
+        }
+
+        function getFileIconBg(type) {
+            switch(type) {
+                case 'video': return 'bg-purple-50';
+                case 'pdf': return 'bg-rose-50';
+                case 'word': return 'bg-blue-50';
+                case 'excel': return 'bg-emerald-50';
+                case 'image': return 'bg-amber-50';
+                case 'code': return 'bg-indigo-50';
+                default: return 'bg-slate-100';
+            }
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024, dm = 2, sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
