@@ -296,12 +296,18 @@
             document.getElementById('submit-text').innerText = "Đang tải lên...";
             document.getElementById('upload-progress-container').classList.remove('hidden');
 
+            const fileCategory = getFileCategory(file.name);
+            let resourceType = 'raw'; // Mặc định cho PDF, Word, Excel, v.v.
+            if (fileCategory === 'image') resourceType = 'image';
+            else if (fileCategory === 'video') resourceType = 'video';
+            else resourceType = 'raw';
+
             const formData = new FormData();
             formData.append("file", file);
             formData.append("upload_preset", UPLOAD_PRESET);
 
             const xhr = new XMLHttpRequest();
-            xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, true);
+            xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, true);
 
             xhr.upload.onprogress = function(e) {
                 if (e.lengthComputable) {
@@ -320,7 +326,6 @@
                 if (xhr.status === 200) {
                     const response = JSON.parse(xhr.responseText);
                     const downloadURL = response.secure_url;
-                    const fileCategory = getFileCategory(file.name);
 
                     const newDoc = {
                         title: title,
@@ -340,7 +345,8 @@
                         alert("Lỗi lưu dữ liệu Firestore: " + err.message);
                     }
                 } else {
-                    alert("Lỗi tải lên Cloudinary. Hãy kiểm tra lại kết nối mạng hoặc định dạng file.");
+                    console.error("Cloudinary Error Response:", xhr.responseText);
+                    alert("Lỗi tải lên Cloudinary. Mã lỗi: " + xhr.status + ". Hãy kiểm tra loại file hoặc dung lượng.");
                 }
             };
 
